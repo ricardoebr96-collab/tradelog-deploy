@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Hanken Grotesk',sans-serif;background:#f4f3ef;color:#17181c;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+input,textarea,button{font-family:inherit;}
+textarea{resize:none;}
+::selection{background:#138a5e;color:#fff;}
+::-webkit-scrollbar{width:11px;height:11px;}
+::-webkit-scrollbar-thumb{background:#dad8d1;border-radius:8px;border:3px solid #f4f3ef;}
+@keyframes tlfade{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+</style>
+</helmet>
+
+<div style="display:flex;height:100vh;width:100%;overflow:hidden;font-size:14px;">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="width:250px;flex:none;height:100vh;background:#fbfaf7;border-right:1px solid #e7e5df;display:flex;flex-direction:column;padding:20px 14px 16px;">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 8px 4px;">
+      <div style="width:32px;height:32px;flex:none;background:#138a5e;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;box-shadow:0 2px 6px rgba(19,138,94,.35);">↗</div>
+      <div style="line-height:1.1;">
+        <div style="font-weight:700;font-size:16px;letter-spacing:-.02em;">TradeLab</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;color:#a4a7ae;text-transform:uppercase;margin-top:2px;">Constitución · v1.0</div>
+      </div>
+    </div>
+
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.15em;color:#b0b2b8;text-transform:uppercase;margin:26px 10px 8px;">La Empresa</div>
+    <button onClick="{{ goPanel }}" style="position:relative;display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;margin-bottom:3px;border:0;background:transparent;border-radius:10px;cursor:pointer;text-align:left;color:#33363d;font-size:14.5px;font-weight:600;" style-hover="background:#efeee9;">
+      <sc-if value="{{ isPanel }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;background:#e7f2ec;border-radius:10px;z-index:0;"></span><span style="position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:#138a5e;z-index:1;"></span></sc-if>
+      <span style="position:relative;z-index:2;width:18px;text-align:center;color:#8e9197;">▦</span><span style="position:relative;z-index:2;">Panel</span>
+    </button>
+    <button onClick="{{ goCapital }}" style="position:relative;display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;margin-bottom:3px;border:0;background:transparent;border-radius:10px;cursor:pointer;text-align:left;color:#33363d;font-size:14.5px;font-weight:600;" style-hover="background:#efeee9;">
+      <sc-if value="{{ isCapital }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;background:#e7f2ec;border-radius:10px;z-index:0;"></span><span style="position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:#138a5e;z-index:1;"></span></sc-if>
+      <span style="position:relative;z-index:2;width:18px;text-align:center;color:#8e9197;">⛁</span><span style="position:relative;z-index:2;">Estructura de Capital</span>
+    </button>
+
+    <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.15em;color:#b0b2b8;text-transform:uppercase;margin:22px 10px 8px;">Scorecard A+</div>
+    <button onClick="{{ goPcs }}" style="position:relative;display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;margin-bottom:3px;border:0;background:transparent;border-radius:10px;cursor:pointer;text-align:left;color:#33363d;font-size:14.5px;font-weight:600;" style-hover="background:#efeee9;">
+      <sc-if value="{{ isPcs }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;background:#e7f2ec;border-radius:10px;z-index:0;"></span><span style="position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:#138a5e;z-index:1;"></span></sc-if>
+      <span style="position:relative;z-index:2;width:18px;text-align:center;color:#138a5e;font-weight:800;">↗</span><span style="position:relative;z-index:2;">Put Credit Spread</span>
+    </button>
+    <button onClick="{{ goCcs }}" style="position:relative;display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border:0;background:transparent;border-radius:10px;cursor:pointer;text-align:left;color:#33363d;font-size:14.5px;font-weight:600;" style-hover="background:#efeee9;">
+      <sc-if value="{{ isCcs }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;background:#e7f2ec;border-radius:10px;z-index:0;"></span><span style="position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:#138a5e;z-index:1;"></span></sc-if>
+      <span style="position:relative;z-index:2;width:18px;text-align:center;color:#cf4636;font-weight:800;">↘</span><span style="position:relative;z-index:2;">Call Credit Spread</span>
+    </button>
+
+    <div style="margin-top:auto;border-top:1px solid #e7e5df;padding:14px 10px 2px;display:flex;align-items:center;gap:10px;">
+      <div style="width:8px;height:8px;border-radius:50%;background:#138a5e;flex:none;box-shadow:0 0 0 3px #e7f2ec;"></div>
+      <div style="line-height:1.2;">
+        <div style="font-weight:700;font-size:13px;">Ricardo</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:#a4a7ae;text-transform:uppercase;margin-top:1px;">Gestor de Capital</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main style="flex:1;height:100vh;overflow-y:auto;">
+
+    <!-- ====== PANEL ====== -->
+    <sc-if value="{{ isPanel }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:34px 44px 60px;max-width:1180px;animation:tlfade .35s ease both;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:26px;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:#138a5e;text-transform:uppercase;margin-bottom:9px;">Artículo IX · Métricas</div>
+          <h1 style="margin:0;font-size:30px;font-weight:800;letter-spacing:-.025em;">Panel de la Empresa</h1>
+          <p style="margin:7px 0 0;color:#6c6f77;font-size:15px;">Un negocio se mide; un hobby no. Reviso mi empresa como lo que es.</p>
+        </div>
+        <div style="display:flex;background:#ebe9e3;border-radius:11px;padding:4px;gap:2px;">
+          <button onClick="{{ vCards }}" style="position:relative;border:0;background:transparent;cursor:pointer;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;color:#5b5e66;" style-hover="color:#17181c;">
+            <sc-if value="{{ isCards }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;inset:0;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.09);z-index:0;"></span></sc-if><span style="position:relative;z-index:1;">Tarjetas</span>
+          </button>
+          <button onClick="{{ vTerminal }}" style="position:relative;border:0;background:transparent;cursor:pointer;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;color:#5b5e66;" style-hover="color:#17181c;">
+            <sc-if value="{{ isTerminal }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.09);z-index:0;"></span></sc-if><span style="position:relative;z-index:1;">Terminal</span>
+          </button>
+          <button onClick="{{ vEditorial }}" style="position:relative;border:0;background:transparent;cursor:pointer;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;color:#5b5e66;" style-hover="color:#17181c;">
+            <sc-if value="{{ isEditorial }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.09);z-index:0;"></span></sc-if><span style="position:relative;z-index:1;">Editorial</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ---- variant: CARDS ---- -->
+      <sc-if value="{{ isCards }}" hint-placeholder-val="{{ true }}">
+      <div style="animation:tlfade .3s ease both;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#a4a7ae;text-transform:uppercase;margin-bottom:13px;">Mi sistema, medido · 79 operaciones</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#a4a7ae;text-transform:uppercase;margin-bottom:14px;">Expectancy / trade</div>
+            <div style="font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#138a5e;">+$20</div>
+            <div style="font-size:12.5px;color:#6c6f77;margin-top:9px;">Ganancia esperada por trade</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#a4a7ae;text-transform:uppercase;margin-bottom:14px;">Profit factor</div>
+            <div style="font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;">1.83</div>
+            <div style="font-size:12.5px;color:#6c6f77;margin-top:9px;">Brutas ganadas / perdidas</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#a4a7ae;text-transform:uppercase;margin-bottom:14px;">Win rate</div>
+            <div style="font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;">76%</div>
+            <div style="font-size:12.5px;color:#6c6f77;margin-top:9px;">Sobre 79 operaciones</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#a4a7ae;text-transform:uppercase;margin-bottom:14px;">Tickers rentables</div>
+            <div style="font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;">13<span style="color:#c4c6cb;font-weight:700;">/14</span></div>
+            <div style="font-size:12.5px;color:#6c6f77;margin-top:9px;">Nombres en verde</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#a4a7ae;text-transform:uppercase;margin-bottom:14px;">Estrategias rentables</div>
+            <div style="font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;">5<span style="color:#c4c6cb;font-weight:700;">/6</span></div>
+            <div style="font-size:12.5px;color:#6c6f77;margin-top:9px;">Motores en verde</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#a4a7ae;text-transform:uppercase;margin-bottom:14px;">Drawdown máx</div>
+            <div style="font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;color:#cf4636;">$799</div>
+            <div style="font-size:12.5px;color:#6c6f77;margin-top:9px;">Mi peor racha</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-top:16px;">
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <div style="font-weight:700;font-size:15px;">Estructura de capital</div>
+              <button onClick="{{ goCapital }}" style="border:0;background:transparent;color:#138a5e;font-weight:600;font-size:13px;cursor:pointer;padding:0;">Ver estructura →</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid #f0eee9;">
+                <span style="width:30px;height:30px;flex:none;border-radius:8px;background:#e7f2ec;color:#138a5e;display:flex;align-items:center;justify-content:center;font-size:15px;">⛁</span>
+                <div style="flex:1;"><div style="font-weight:600;">Capital Operativo</div><div style="font-size:12.5px;color:#6c6f77;">El motor de flujo — credit spreads</div></div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#138a5e;background:#e7f2ec;padding:4px 9px;border-radius:6px;">Flujo</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid #f0eee9;">
+                <span style="width:30px;height:30px;flex:none;border-radius:8px;background:#e9eefb;color:#2f5bd0;display:flex;align-items:center;justify-content:center;font-size:15px;">▣</span>
+                <div style="flex:1;"><div style="font-weight:600;">Patrimonio</div><div style="font-size:12.5px;color:#6c6f77;">Swings direccionales 30–50%</div></div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#2f5bd0;background:#e9eefb;padding:4px 9px;border-radius:6px;">Crecer</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:13px;padding:11px 0;">
+                <span style="width:30px;height:30px;flex:none;border-radius:8px;background:#edeef1;color:#3a3f4a;display:flex;align-items:center;justify-content:center;font-size:15px;">⛉</span>
+                <div style="flex:1;"><div style="font-weight:600;">Bóveda</div><div style="font-size:12.5px;color:#6c6f77;">La base intacta de seguridad</div></div>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3a3f4a;background:#edeef1;padding:4px 9px;border-radius:6px;">Proteger</span>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:22px;box-shadow:0 1px 2px rgba(20,20,20,.03);display:flex;flex-direction:column;">
+            <div style="font-weight:700;font-size:15px;margin-bottom:10px;">Junta directiva mensual</div>
+            <p style="margin:0;font-size:13.5px;color:#5b5e66;line-height:1.55;">Al cierre de cada mes: P&amp;L, adherencia a las reglas, qué funcionó, qué se rompió, y el costo de los trades forzados.</p>
+            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;background:#e7f2ec;color:#0d6b48;padding:5px 10px;border-radius:6px;">Limpio</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;background:#fbe9e6;color:#a8392c;padding:5px 10px;border-radius:6px;">vs Forzado</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;background:#15171a;border-radius:14px;padding:26px 28px;color:#f4f3ef;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:#6fb699;text-transform:uppercase;margin-bottom:11px;">El edge</div>
+          <div style="font-size:21px;font-weight:600;letter-spacing:-.01em;line-height:1.35;max-width:760px;">Mi trabajo no es ganar cada trade — es ejecutar el sistema en cada trade.</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ---- variant: TERMINAL ---- -->
+      <sc-if value="{{ isTerminal }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:tlfade .3s ease both;background:#fff;border:1px solid #e7e5df;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+        <div style="background:#15171a;color:#d6d4cd;padding:13px 22px;display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;">
+          <span style="color:#6fb699;">● TRADELAB · LIBRO DE LA EMPRESA</span>
+          <span style="color:#83868c;">V1.0 · JUN 2026 · 79 OPS</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.25fr 1fr;">
+          <div style="padding:8px 24px 18px;border-right:1px solid #efedea;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;border-bottom:1px solid #f0eee9;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#83868c;letter-spacing:.06em;">EXPECTANCY / TRADE</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:#138a5e;">+$20.00</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;border-bottom:1px solid #f0eee9;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#83868c;letter-spacing:.06em;">PROFIT FACTOR</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;">1.83×</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;border-bottom:1px solid #f0eee9;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#83868c;letter-spacing:.06em;">WIN RATE</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;">76.0%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;border-bottom:1px solid #f0eee9;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#83868c;letter-spacing:.06em;">TICKERS RENTABLES</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;">13<span style="color:#c4c6cb;">/14</span></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;border-bottom:1px solid #f0eee9;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#83868c;letter-spacing:.06em;">ESTRATEGIAS RENTABLES</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;">5<span style="color:#c4c6cb;">/6</span></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#83868c;letter-spacing:.06em;">DRAWDOWN MÁX</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:#cf4636;">-$799</span>
+            </div>
+          </div>
+          <div style="padding:18px 24px;background:#fbfaf7;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;margin-bottom:10px;">DESPLIEGUE DE CAPITAL</div>
+            <div style="display:flex;height:30px;border-radius:7px;overflow:hidden;border:1px solid #e7e5df;">
+              <div style="width:18%;background:#138a5e;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;">≤550</div>
+              <div style="flex:1;background:#edece7;display:flex;align-items:center;justify-content:center;color:#83868c;font-family:'JetBrains Mono',monospace;font-size:10px;">PÓLVORA SECA</div>
+            </div>
+            <div style="font-size:11.5px;color:#83868c;margin-top:7px;">Máx ~$550 por operación. El resto, en reserva.</div>
+
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;margin:20px 0 10px;">DELTA NETA DEL LIBRO</div>
+            <div style="position:relative;height:26px;border-radius:7px;background:#edece7;border:1px solid #e7e5df;">
+              <div style="position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:#c4c6cb;"></div>
+              <div style="position:absolute;left:56%;top:5px;width:14px;height:14px;border-radius:50%;background:#138a5e;transform:translateX(-50%);box-shadow:0 0 0 3px #fff;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#a4a7ae;margin-top:6px;"><span>CORTO</span><span>EQUILIBRADA</span><span>LARGO</span></div>
+            <div style="font-size:11.5px;color:#83868c;margin-top:6px;">El próximo trade equilibra — no concentra.</div>
+          </div>
+        </div>
+        <div style="background:#fbfaf7;border-top:1px solid #efedea;padding:11px 24px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#83868c;">EXPECTANCY POSITIVA · EJECUTAR SIN DESVIARSE · LEY DE LOS GRANDES NÚMEROS</div>
+      </div>
+      </sc-if>
+
+      <!-- ---- variant: EDITORIAL ---- -->
+      <sc-if value="{{ isEditorial }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:tlfade .3s ease both;max-width:880px;">
+        <h2 style="font-family:'Newsreader',serif;font-weight:400;font-size:48px;letter-spacing:-.02em;line-height:1.05;margin:14px 0 0;">El sistema, medido.</h2>
+        <p style="font-size:17px;color:#5b5e66;max-width:560px;line-height:1.5;margin:16px 0 0;">Estas no son aspiraciones — son hechos comprobados en mi propio historial de 79 operaciones.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:44px;border-top:1px solid #e0ded8;">
+          <div style="padding:26px 26px 26px 0;border-bottom:1px solid #e0ded8;border-right:1px solid #e0ded8;">
+            <div style="font-family:'Newsreader',serif;font-size:46px;line-height:1;color:#138a5e;">+$20</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;text-transform:uppercase;margin-top:12px;">Expectancy / trade</div>
+          </div>
+          <div style="padding:26px;border-bottom:1px solid #e0ded8;border-right:1px solid #e0ded8;">
+            <div style="font-family:'Newsreader',serif;font-size:46px;line-height:1;">1.83</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;text-transform:uppercase;margin-top:12px;">Profit factor</div>
+          </div>
+          <div style="padding:26px 0 26px 26px;border-bottom:1px solid #e0ded8;">
+            <div style="font-family:'Newsreader',serif;font-size:46px;line-height:1;">76%</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;text-transform:uppercase;margin-top:12px;">Win rate</div>
+          </div>
+          <div style="padding:26px 26px 26px 0;border-right:1px solid #e0ded8;">
+            <div style="font-family:'Newsreader',serif;font-size:46px;line-height:1;">13/14</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;text-transform:uppercase;margin-top:12px;">Tickers rentables</div>
+          </div>
+          <div style="padding:26px;border-right:1px solid #e0ded8;">
+            <div style="font-family:'Newsreader',serif;font-size:46px;line-height:1;">5/6</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;text-transform:uppercase;margin-top:12px;">Estrategias rentables</div>
+          </div>
+          <div style="padding:26px 0 26px 26px;">
+            <div style="font-family:'Newsreader',serif;font-size:46px;line-height:1;color:#cf4636;">$799</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;text-transform:uppercase;margin-top:12px;">Drawdown máximo</div>
+          </div>
+        </div>
+
+        <blockquote style="margin:46px 0 0;padding:0 0 0 22px;border-left:3px solid #138a5e;">
+          <p style="font-family:'Newsreader',serif;font-style:italic;font-size:24px;line-height:1.45;margin:0;color:#2a2c31;">El edge se realiza con consistencia y disciplina, no con aciertos individuales.</p>
+          <cite style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#a4a7ae;font-style:normal;display:block;margin-top:14px;">— ARTÍCULO II · LA VENTAJA MATEMÁTICA</cite>
+        </blockquote>
+      </div>
+      </sc-if>
+
+    </div>
+    </sc-if>
+
+    <!-- ====== CAPITAL ====== -->
+    <sc-if value="{{ isCapital }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:34px 44px 60px;max-width:1180px;animation:tlfade .35s ease both;">
+      <div style="margin-bottom:26px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:#138a5e;text-transform:uppercase;margin-bottom:9px;">Artículo III · Estructura</div>
+        <h1 style="margin:0;font-size:30px;font-weight:800;letter-spacing:-.025em;">Estructura de Capital</h1>
+        <p style="margin:7px 0 0;color:#6c6f77;font-size:15px;">Los compartimentos de la empresa. Cada uno con su rol — para que el retorno no dependa de ninguno solo.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div style="background:#fff;border:1px solid #e7e5df;border-top:3px solid #138a5e;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px;">
+            <span style="width:38px;height:38px;border-radius:10px;background:#e7f2ec;color:#138a5e;display:flex;align-items:center;justify-content:center;font-size:19px;">⛁</span>
+            <div><div style="font-weight:700;font-size:16px;">Capital Operativo</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#138a5e;text-transform:uppercase;">El motor de flujo</div></div>
+          </div>
+          <p style="margin:0;font-size:13.5px;color:#5b5e66;line-height:1.6;">Credit spreads (PCS, CCS, Iron Condors). Genera el flujo de caja del negocio cosechando theta y prima de volatilidad.</p>
+          <div style="margin-top:16px;padding:11px 13px;background:#f6f5f1;border-radius:9px;font-size:12.5px;color:#3a3d44;"><span style="color:#138a5e;font-weight:700;">Disciplina:</span> máx ~$550 por operación · el resto en pólvora seca.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e5df;border-top:3px solid #2f5bd0;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px;">
+            <span style="width:38px;height:38px;border-radius:10px;background:#e9eefb;color:#2f5bd0;display:flex;align-items:center;justify-content:center;font-size:19px;">▣</span>
+            <div><div style="font-weight:700;font-size:16px;">Patrimonio</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#2f5bd0;text-transform:uppercase;">Swings direccionales</div></div>
+          </div>
+          <p style="margin:0;font-size:13.5px;color:#5b5e66;line-height:1.6;">Posiciones en acciones para swings de 30–50% de retorno. Se opera con plan de entrada, tamaño y salida.</p>
+          <div style="margin-top:16px;padding:11px 13px;background:#f6f5f1;border-radius:9px;font-size:12.5px;color:#3a3d44;"><span style="color:#2f5bd0;font-weight:700;">Nunca:</span> un pozo donde promediar a la baja.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e5df;border-top:3px solid #3a3f4a;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:16px;">
+            <span style="width:38px;height:38px;border-radius:10px;background:#edeef1;color:#3a3f4a;display:flex;align-items:center;justify-content:center;font-size:19px;">⛉</span>
+            <div><div style="font-weight:700;font-size:16px;">Bóveda</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#3a3f4a;text-transform:uppercase;">La base de seguridad</div></div>
+          </div>
+          <p style="margin:0;font-size:13.5px;color:#5b5e66;line-height:1.6;">Capital intacto que no se toca. La reserva que da estabilidad y permite operar sin la presión de necesitar el dinero.</p>
+          <div style="margin-top:16px;padding:11px 13px;background:#f6f5f1;border-radius:9px;font-size:12.5px;color:#3a3d44;"><span style="color:#3a3f4a;font-weight:700;">Protege</span> a la empresa de sí misma.</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+        <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+          <div style="font-weight:700;font-size:15px;margin-bottom:4px;">Disciplina de despliegue</div>
+          <p style="margin:0 0 16px;font-size:13px;color:#6c6f77;">La pared de $550 por operación. Lo desplegado es la minoría; la pólvora seca, la mayoría.</p>
+          <div style="display:flex;height:40px;border-radius:9px;overflow:hidden;border:1px solid #e7e5df;">
+            <div style="width:20%;background:#138a5e;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;">≤ $550</div>
+            <div style="flex:1;background:#edece7;display:flex;align-items:center;justify-content:center;color:#83868c;font-family:'JetBrains Mono',monospace;font-size:11px;">PÓLVORA SECA</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11.5px;color:#a4a7ae;font-family:'JetBrains Mono',monospace;"><span>DESPLEGADO</span><span>RESERVA</span></div>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:24px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+          <div style="font-weight:700;font-size:15px;margin-bottom:14px;">La máquina multi-estrategia</div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+            <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f0eee9;"><span style="font-weight:600;font-size:13.5px;width:120px;flex:none;">Credit spreads</span><span style="color:#c4c6cb;">→</span><span style="font-size:13px;color:#5b5e66;">ingreso (theta + prima)</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f0eee9;"><span style="font-weight:600;font-size:13.5px;width:120px;flex:none;">La Rueda</span><span style="color:#c4c6cb;">→</span><span style="font-size:13px;color:#5b5e66;">ingreso + acumulación</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f0eee9;"><span style="font-weight:600;font-size:13.5px;width:120px;flex:none;">LEAPS / PMCC</span><span style="color:#c4c6cb;">→</span><span style="font-size:13px;color:#5b5e66;">direccional apalancado</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:9px 0;"><span style="font-weight:600;font-size:13.5px;width:120px;flex:none;">Acciones</span><span style="color:#c4c6cb;">→</span><span style="font-size:13px;color:#5b5e66;">base direccional estable</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ====== SCORECARD (PCS / CCS) ====== -->
+    <sc-if value="{{ isScorecard }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:34px 44px 60px;max-width:1180px;animation:tlfade .35s ease both;">
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:{{ dirColor }};">{{ cardKicker }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="width:40px;height:40px;flex:none;border-radius:11px;background:{{ dirSoft }};color:{{ dirColor }};display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;">{{ arrow }}</span>
+          <div>
+            <h1 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.025em;">{{ cardTitle }}</h1>
+          </div>
+        </div>
+        <p style="margin:11px 0 0;color:#6c6f77;font-size:15px;">{{ cardSub }}</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 390px;gap:20px;align-items:start;">
+
+        <!-- criteria list -->
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="8">
+            <div style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #e7e5df;border-radius:12px;padding:14px 16px;box-shadow:0 1px 2px rgba(20,20,20,.025);">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:#bcbfc4;width:22px;flex:none;">{{ it.num }}</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:600;font-size:14.5px;">{{ it.t }}</div>
+                <div style="font-size:12.5px;color:#83868c;margin-top:2px;line-height:1.45;">{{ it.d }}</div>
+              </div>
+              <sc-if value="{{ it.auto }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ it.met }}" hint-placeholder-val="{{ false }}">
+                  <span style="flex:none;font-family:'JetBrains Mono',monospace;font-size:11px;background:#e7f2ec;color:#0d6b48;padding:7px 11px;border-radius:8px;white-space:nowrap;">✓ calc</span>
+                </sc-if>
+                <sc-if value="{{ it.notMet }}" hint-placeholder-val="{{ true }}">
+                  <span style="flex:none;font-family:'JetBrains Mono',monospace;font-size:11px;background:#f3f1ec;color:#9a9da3;padding:7px 11px;border-radius:8px;white-space:nowrap;">— calc</span>
+                </sc-if>
+              </sc-if>
+              <sc-if value="{{ it.manual }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ it.toggle }}" style="flex:none;border:0;cursor:pointer;font-size:13px;font-weight:600;padding:8px 14px;border-radius:9px;white-space:nowrap;background:{{ it.btnBg }};color:{{ it.btnColor }};box-shadow:{{ it.btnShadow }};">{{ it.btnLabel }}</button>
+              </sc-if>
+            </div>
+          </sc-for>
+
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#15171a;border-radius:12px;padding:16px 18px;color:#cfd0cb;margin-top:5px;">
+            <span style="color:#6fb699;font-size:15px;flex:none;line-height:1.5;">◆</span>
+            <p style="margin:0;font-size:13px;line-height:1.55;">{{ principle }}</p>
+          </div>
+        </div>
+
+        <!-- calculator + verdict (sticky) -->
+        <div style="position:sticky;top:20px;display:flex;flex-direction:column;gap:14px;">
+
+          <div style="background:#fff;border:1px solid #e7e5df;border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;color:#a4a7ae;text-transform:uppercase;margin-bottom:14px;">Calculadora del trade</div>
+
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3d44;margin-bottom:6px;">Tamaño desplegado ($)</label>
+            <input type="number" value="{{ size }}" onChange="{{ onSize }}" style="width:100%;border:1px solid #ddd9d1;border-radius:9px;padding:10px 12px;font-size:15px;font-family:'JetBrains Mono',monospace;outline:none;" style-focus="border-color:#138a5e;" />
+            <div style="height:8px;border-radius:6px;background:#edece7;margin-top:10px;overflow:hidden;">
+              <div style="height:100%;width:{{ sizePct }}%;background:{{ sizeBar }};border-radius:6px;transition:width .2s;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px;">
+              <span style="font-size:11.5px;color:#a4a7ae;font-family:'JetBrains Mono',monospace;">PARED $550</span>
+              <span style="font-size:11.5px;font-weight:600;color:{{ sizeBar }};">{{ sizeStatus }}</span>
+            </div>
+
+            <div style="height:1px;background:#f0eee9;margin:18px 0;"></div>
+
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3d44;margin-bottom:6px;">Crédito / Ancho del spread</label>
+            <div style="display:flex;gap:8px;">
+              <input type="number" value="{{ credit }}" onChange="{{ onCredit }}" placeholder="Crédito" style="width:50%;border:1px solid #ddd9d1;border-radius:9px;padding:10px 12px;font-size:14px;font-family:'JetBrains Mono',monospace;outline:none;" style-focus="border-color:#138a5e;" />
+              <input type="number" value="{{ width }}" onChange="{{ onWidth }}" placeholder="Ancho" style="width:50%;border:1px solid #ddd9d1;border-radius:9px;padding:10px 12px;font-size:14px;font-family:'JetBrains Mono',monospace;outline:none;" style-focus="border-color:#138a5e;" />
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:9px;">
+              <span style="font-size:11.5px;color:#a4a7ae;font-family:'JetBrains Mono',monospace;">CRÉDITO = {{ ratioStr }} · MÍN ⅓</span>
+              <span style="font-size:11.5px;font-weight:600;color:{{ ratioColor }};">{{ ratioStatus }}</span>
+            </div>
+
+            <div style="height:1px;background:#f0eee9;margin:18px 0;"></div>
+
+            <label style="display:block;font-size:12.5px;font-weight:600;color:#3a3d44;margin-bottom:6px;">Plan de salida</label>
+            <div style="display:flex;align-items:center;gap:9px;background:#e7f2ec;border-radius:9px;padding:9px 12px;margin-bottom:8px;">
+              <span style="color:#0d6b48;font-weight:700;">✓</span><span style="font-size:12.5px;color:#0d6b48;">Tomar ganancia al 50% del crédito.</span>
+            </div>
+            <textarea value="{{ invalid }}" onChange="{{ onInvalid }}" rows="2" placeholder="Punto de invalidación: ¿qué nivel roto cierra el trade?" style="width:100%;border:1px solid #ddd9d1;border-radius:9px;padding:10px 12px;font-size:13px;line-height:1.45;outline:none;" style-focus="border-color:#138a5e;"></textarea>
+          </div>
+
+          <!-- verdict -->
+          <div style="background:{{ verdictBg }};border:1px solid {{ verdictBorder }};border-radius:14px;padding:22px 20px;box-shadow:0 1px 2px rgba(20,20,20,.03);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:{{ verdictInk }};">Veredicto del setup</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ verdictInk }};">{{ score }}<span style="opacity:.5;">/8</span></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:13px;">
+              <span style="width:46px;height:46px;flex:none;border-radius:12px;background:{{ verdictInk }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;">{{ verdictIcon }}</span>
+              <div>
+                <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;color:{{ verdictInk }};line-height:1;">{{ verdictLabel }}</div>
+                <div style="font-size:12.5px;color:{{ verdictInk }};opacity:.8;margin-top:4px;">{{ verdictSub }}</div>
+              </div>
+            </div>
+            <sc-if value="{{ hasFails }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:16px;border-top:1px solid {{ verdictBorder }};padding-top:13px;">
+                <div style="font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em;color:{{ verdictInk }};opacity:.7;text-transform:uppercase;margin-bottom:9px;">Falta cumplir</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <sc-for list="{{ fails }}" as="f" hint-placeholder-count="3">
+                    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:{{ verdictInk }};"><span style="opacity:.6;">✗</span><span>{{ f }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;panel&quot;,&quot;capital&quot;,&quot;pcs&quot;,&quot;ccs&quot;],&quot;default&quot;:&quot;panel&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;startVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cards&quot;,&quot;terminal&quot;,&quot;editorial&quot;],&quot;default&quot;:&quot;cards&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    screen: this.props.startScreen || 'panel',
+    variant: this.props.startVariant || 'cards',
+    pcs: { crit: {1:false,2:false,3:false,4:false,5:false,7:false}, size: 550, credit: '', width: '', invalid: '' },
+    ccs: { crit: {1:false,2:false,3:false,4:false,5:false,7:false}, size: 550, credit: '', width: '', invalid: '' },
+  };
+
+  PCS = {
+    kicker: 'Setup A+ · Alcista', title: 'Put Credit Spread', arrow: '↗',
+    sub: 'Mi entrada quirúrgica alcista. Si no cumple, no entro.',
+    principle: 'Cada criterio que falla baja el puntaje. Un retroceso solo es oportunidad si el IV Rank lo justifica, el precio se estabilizó en soporte, y no me sobre-concentra. No "todo retroceso es oportunidad".',
+    items: [
+      { t: 'Tendencia alcista definida', d: 'Por encima de las medias clave.' },
+      { t: 'Retroceso de 2–4% (un dip)', d: 'Nunca tras una subida fuerte — eso es extensión, no dip.' },
+      { t: 'Precio en soporte confirmado', d: 'Histórico, defendido, o resistencia-vuelta-soporte.' },
+      { t: 'Strike corto bajo el soporte', d: 'Con piso estructural debajo. Jamás en un air pocket.' },
+      { t: 'IV elevada vs HV', d: 'IVR/IVP decente + IV > HV. Sin edge de volatilidad, no hay trade.' },
+      { t: 'Crédito ≥ ⅓ del ancho', d: 'Si cobro centavos por el riesgo, no vale.', auto: 'ratio' },
+      { t: 'Delta agregada no sobre-concentrada', d: '¿Este trade me deja demasiado largo en una dirección?' },
+      { t: 'Tamaño ≤ $550 + plan de salida escrito', d: 'Objetivo y punto de invalidación definidos antes de entrar.', auto: 'size' },
+    ],
+  };
+  CCS = {
+    kicker: 'Setup A+ · Bajista', title: 'Call Credit Spread', arrow: '↘',
+    sub: 'El reverso exacto. Mi entrada quirúrgica bajista.',
+    principle: 'PCS busca un piso que aguante por abajo; CCS busca un techo que tope por arriba. En ambos, el strike corto necesita una estructura real que lo defienda. Sin esa estructura, el strike flota — y lo que flota, cae.',
+    items: [
+      { t: 'Tendencia bajista definida', d: 'Por debajo de las medias clave.' },
+      { t: 'Rebote de 2–4% hacia resistencia', d: 'Nunca tras una caída fuerte — eso es extensión.' },
+      { t: 'Precio en resistencia confirmada', d: 'Histórica, defendida, o soporte-vuelto-resistencia.' },
+      { t: 'Strike corto sobre la resistencia', d: 'Con techo estructural arriba. Jamás en un air pocket.' },
+      { t: 'IV elevada vs HV', d: 'Mismo criterio: vendo prima solo con edge de volatilidad real.' },
+      { t: 'Crédito ≥ ⅓ del ancho', d: 'El riesgo debe pagarse.', auto: 'ratio' },
+      { t: 'Delta agregada no sobre-concentrada', d: '¿Me deja demasiado corto en una dirección?' },
+      { t: 'Tamaño ≤ $550 + plan de salida escrito', d: 'Sin excepciones.', auto: 'size' },
+    ],
+  };
+
+  goPanel = () => this.setState({ screen: 'panel' });
+  goCapital = () => this.setState({ screen: 'capital' });
+  goPcs = () => this.setState({ screen: 'pcs' });
+  goCcs = () => this.setState({ screen: 'ccs' });
+  vCards = () => this.setState({ variant: 'cards' });
+  vTerminal = () => this.setState({ variant: 'terminal' });
+  vEditorial = () => this.setState({ variant: 'editorial' });
+
+  toggle(scope, idx) {
+    this.setState(st => {
+      const c = { ...st[scope].crit };
+      c[idx] = !c[idx];
+      return { [scope]: { ...st[scope], crit: c } };
+    });
+  }
+  setField(scope, field, val) {
+    this.setState(st => ({ [scope]: { ...st[scope], [field]: val } }));
+  }
+
+  renderVals() {
+    const { screen, variant } = this.state;
+    const isScorecard = screen === 'pcs' || screen === 'ccs';
+    const scope = isScorecard ? screen : 'pcs';
+    const cfg = scope === 'pcs' ? this.PCS : this.CCS;
+    const sc = this.state[scope];
+
+    const sizeNum = Number(sc.size) || 0;
+    const sizeOk = sizeNum > 0 && sizeNum <= 550;
+    const over = sizeNum > 550;
+    const sizePct = Math.max(2, Math.min(100, (sizeNum / 550) * 100));
+    const sizeBar = over ? '#cf4636' : (sizeOk ? '#138a5e' : '#c4c6cb');
+    const sizeStatus = over ? 'Pared rota' : (sizeOk ? 'Dentro de la pared' : 'Define el tamaño');
+
+    const credit = Number(sc.credit) || 0, width = Number(sc.width) || 0;
+    const ratio = width > 0 ? credit / width : 0;
+    const ratioOk = credit > 0 && width > 0 && ratio >= 1 / 3;
+    const ratioStr = (credit > 0 && width > 0) ? (ratio * 100).toFixed(0) + '%' : '—';
+    const ratioColor = ratioOk ? '#138a5e' : ((credit > 0 && width > 0) ? '#cf4636' : '#c4c6cb');
+    const ratioStatus = ratioOk ? 'Paga el riesgo' : ((credit > 0 && width > 0) ? 'Cobro centavos' : 'Pendiente');
+
+    const planOk = (sc.invalid || '').trim().length > 0;
+
+    const items = cfg.items.map((it, i) => {
+      const idx = i + 1;
+      let met;
+      if (it.auto === 'ratio') met = ratioOk;
+      else if (it.auto === 'size') met = sizeOk && planOk;
+      else met = !!sc.crit[idx];
+      const manual = !it.auto;
+      return {
+        num: String(idx).padStart(2, '0'),
+        t: it.t, d: it.d,
+        auto: !!it.auto, manual, met, notMet: !met,
+        toggle: it.auto ? null : () => this.toggle(scope, idx),
+        btnLabel: met ? '✓ Cumple' : 'Marcar',
+        btnBg: met ? '#e7f2ec' : '#f5f3ee',
+        btnColor: met ? '#0d6b48' : '#83868c',
+        btnShadow: met ? 'inset 0 0 0 1px #bfe0cd' : 'inset 0 0 0 1px #e2dfd8',
+      };
+    });
+
+    const score = items.filter(x => x.met).length;
+    const go = score === 8;
+    const fails = items.filter(x => !x.met).map(x => x.t);
+
+    const dir = scope === 'pcs';
+    return {
+      // nav / routing
+      isPanel: screen === 'panel', isCapital: screen === 'capital', isScorecard,
+      isPcs: screen === 'pcs', isCcs: screen === 'ccs',
+      isCards: variant === 'cards', isTerminal: variant === 'terminal', isEditorial: variant === 'editorial',
+      goPanel: this.goPanel, goCapital: this.goCapital, goPcs: this.goPcs, goCcs: this.goCcs,
+      vCards: this.vCards, vTerminal: this.vTerminal, vEditorial: this.vEditorial,
+
+      // scorecard header
+      cardKicker: cfg.kicker, cardTitle: cfg.title, cardSub: cfg.sub, arrow: cfg.arrow, principle: cfg.principle,
+      dirColor: dir ? '#138a5e' : '#cf4636', dirSoft: dir ? '#e7f2ec' : '#fbe9e6',
+
+      // criteria
+      items,
+
+      // calculator
+      size: sc.size, onSize: e => this.setField(scope, 'size', e.target.value),
+      sizePct, sizeBar, sizeStatus,
+      credit: sc.credit, onCredit: e => this.setField(scope, 'credit', e.target.value),
+      width: sc.width, onWidth: e => this.setField(scope, 'width', e.target.value),
+      ratioStr, ratioColor, ratioStatus,
+      invalid: sc.invalid, onInvalid: e => this.setField(scope, 'invalid', e.target.value),
+
+      // verdict
+      score, hasFails: fails.length > 0, fails,
+      verdictBg: go ? '#e7f2ec' : '#fff',
+      verdictBorder: go ? '#bfe0cd' : '#e7e5df',
+      verdictInk: go ? '#0d6b48' : '#a8392c',
+      verdictIcon: go ? '✓' : '✗',
+      verdictLabel: go ? 'ENTRA' : 'NO ENTRA',
+      verdictSub: go ? 'Setup A+ completo. Ejecuta el plan.' : 'Algún criterio falla — no fuerces el trade.',
+    };
+  }
+}
+</script>
+</body>
+</html>

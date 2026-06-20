@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Space Grotesk',sans-serif;background:#0a0b0e;color:#eef1f5;-webkit-font-smoothing:antialiased;}
+input,select,textarea{font-family:inherit;}
+textarea{resize:vertical;}
+::selection{background:#f5a623;color:#1a1205;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:#1c2028;border-radius:8px;border:3px solid #0a0b0e;}
+::-webkit-scrollbar-track{background:transparent;}
+.serif{font-family:'Newsreader',serif;font-weight:500;}
+.num{font-family:'JetBrains Mono',monospace;}
+@keyframes tlf{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes drawline{from{stroke-dashoffset:1400;}to{stroke-dashoffset:0;}}
+@keyframes mdl{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+</style>
+</helmet>
+
+<div style="display:flex;height:100vh;width:100%;overflow:hidden;font-size:14px;background:#0a0b0e;">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="width:236px;flex:none;height:100vh;background:#0a0b0e;border-right:1px solid #181b22;display:flex;flex-direction:column;padding:22px 16px 16px;">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 6px;">
+      <div style="width:31px;height:31px;flex:none;background:linear-gradient(150deg,#fbbf3b,#f59016);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#1a1205;font-weight:700;font-size:17px;">↗</div>
+      <div class="serif" style="font-size:20px;letter-spacing:.01em;">TradeLog</div>
+    </div>
+
+    <div class="num" style="font-size:9px;letter-spacing:.2em;color:#454c58;text-transform:uppercase;margin:30px 8px 10px;">Cuenta</div>
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
+      <button onClick="{{ n.go }}" style="position:relative;display:flex;align-items:center;gap:13px;width:100%;padding:9px 12px;margin-bottom:1px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;color:{{ n.color }};font-size:14.5px;font-weight:500;" style-hover="color:#eef1f5;">
+        <sc-if value="{{ n.active }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:0;top:7px;bottom:7px;width:2px;border-radius:2px;background:#f5a623;"></span></sc-if>
+        <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ n.dot }};"></span>
+        <span>{{ n.label }}</span>
+        <sc-if value="{{ n.badge }}" hint-placeholder-val="{{ false }}"><span class="num" style="margin-left:auto;font-size:10.5px;color:#8a909c;">{{ n.badge }}</span></sc-if>
+      </button>
+    </sc-for>
+
+    <div class="num" style="font-size:9px;letter-spacing:.2em;color:#454c58;text-transform:uppercase;margin:24px 8px 10px;">Datos</div>
+    <button onClick="{{ openRestore }}" style="display:flex;align-items:center;gap:13px;width:100%;padding:9px 12px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;color:#8a909c;font-size:14px;font-weight:500;" style-hover="color:#eef1f5;"><span style="width:8px;height:8px;border-radius:2px;flex:none;background:#2a3038;"></span>Restaurar respaldo</button>
+    <button onClick="{{ doBackup }}" style="display:flex;align-items:center;gap:13px;width:100%;padding:9px 12px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;color:#8a909c;font-size:14px;font-weight:500;" style-hover="color:#eef1f5;"><span style="width:8px;height:8px;border-radius:2px;flex:none;background:#2a3038;"></span>Respaldar (JSON)</button>
+
+    <div style="margin-top:auto;display:flex;align-items:center;gap:11px;border-top:1px solid #181b22;padding:15px 6px 2px;">
+      <div style="width:30px;height:30px;flex:none;border-radius:50%;border:1px solid #2a3038;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:#c9cdd6;">R</div>
+      <div style="line-height:1.2;"><div style="font-weight:600;font-size:13.5px;">Ricardo</div><div style="font-size:11px;color:#565d6a;">Gestor de capital</div></div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main style="flex:1;height:100vh;overflow-y:auto;">
+
+    <div style="padding:30px 40px 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;">
+      <div>
+        <h1 class="serif" style="margin:0;font-size:34px;letter-spacing:.005em;line-height:1;">{{ pageTitle }}</h1>
+        <div style="font-size:13px;color:#727885;margin-top:9px;">{{ pageSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button onClick="{{ openAddTrade }}" style="border:1px solid #1c2028;background:transparent;color:#c9cdd6;font-weight:600;font-size:13.5px;padding:10px 16px;border-radius:9px;cursor:pointer;white-space:nowrap;" style-hover="border-color:#2a3038;color:#fff;">Registrar trade</button>
+        <button onClick="{{ goScore }}" style="border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:13.5px;padding:11px 18px;border-radius:9px;cursor:pointer;white-space:nowrap;">+ Evaluar setup</button>
+      </div>
+    </div>
+
+    <!-- ====== OVERVIEW ====== -->
+    <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:14px 40px 48px;max-width:1300px;animation:tlf .35s ease both;">
+      <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+        <div style="border-top:1px solid #1a1d24;margin-top:6px;padding:80px 20px;text-align:center;">
+          <div class="serif" style="font-size:30px;color:#3a4150;">Sin datos todavía</div>
+          <p style="font-size:14px;color:#727885;max-width:420px;margin:12px auto 24px;line-height:1.6;">Restaura tu respaldo JSON desde la barra lateral, o registra tu primer trade / evalúa un setup para empezar a medir la empresa.</p>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button onClick="{{ openRestore }}" style="border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:10px;cursor:pointer;">Restaurar respaldo</button>
+            <button onClick="{{ openAddTrade }}" style="border:1px solid #1c2028;background:transparent;color:#c9cdd6;font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:10px;cursor:pointer;">Registrar trade</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+      <div style="border-top:1px solid #1a1d24;border-bottom:1px solid #1a1d24;padding:22px 2px;display:flex;align-items:center;gap:30px;">
+        <div style="flex:none;">
+          <div class="num" style="font-size:10px;letter-spacing:.16em;color:#727885;text-transform:uppercase;">P&amp;L total</div>
+          <div class="serif" style="font-size:52px;line-height:1;color:{{ pnlColor }};margin-top:6px;">{{ totalPnl }}</div>
+        </div>
+        <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
+          <div style="padding:0 22px;border-left:1px solid #1a1d24;"><div class="num" style="font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">Win rate</div><div class="serif" style="font-size:26px;margin-top:7px;color:#34d399;">{{ wr }}</div></div>
+          <div style="padding:0 22px;border-left:1px solid #1a1d24;"><div class="num" style="font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">Profit factor</div><div class="serif" style="font-size:26px;margin-top:7px;color:{{ pfColor }};">{{ pf }}</div></div>
+          <div style="padding:0 22px;border-left:1px solid #1a1d24;"><div class="num" style="font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">Drawdown</div><div class="serif" style="font-size:26px;margin-top:7px;color:#ef5a78;">{{ dd }}</div></div>
+          <div style="padding:0 22px;border-left:1px solid #1a1d24;"><div class="num" style="font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">Operaciones</div><div class="serif" style="font-size:26px;margin-top:7px;">{{ opsN }}</div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:0;border-bottom:1px solid #1a1d24;">
+        <div style="padding:24px 30px 18px 2px;border-right:1px solid #1a1d24;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="font-weight:600;font-size:15px;">Curva de equity</div>
+            <div class="num" style="font-size:11px;color:#565d6a;">acumulado · {{ opsN }} ops</div>
+          </div>
+          <div style="position:relative;">
+            <svg viewBox="0 0 700 220" preserveAspectRatio="none" style="width:100%;height:236px;display:block;">
+              <defs><linearGradient id="eqw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f5a623" stop-opacity="0.24"/><stop offset="100%" stop-color="#f5a623" stop-opacity="0"/></linearGradient></defs>
+              <g stroke="#181b22" stroke-width="1"><line x1="0" y1="6" x2="700" y2="6"/><line x1="0" y1="110" x2="700" y2="110"/><line x1="0" y1="214" x2="700" y2="214"/></g>
+              <path d="{{ areaPath }}" fill="url(#eqw)"></path>
+              <path d="{{ linePath }}" fill="none" stroke="#f5a623" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="1400" style="animation:drawline 1.3s ease-out forwards;"></path>
+              <circle cx="{{ lastX }}" cy="{{ lastY }}" r="4.5" fill="#f5a623"></circle>
+              <sc-if value="{{ chartHover }}" hint-placeholder-val="{{ false }}">
+                <line x1="{{ hLineX }}" y1="0" x2="{{ hLineX }}" y2="220" stroke="#3a4150" stroke-width="1" stroke-dasharray="3 3"></line>
+                <circle cx="{{ hx }}" cy="{{ hy }}" r="5.5" fill="#f5a623" stroke="#0a0b0e" stroke-width="2"></circle>
+              </sc-if>
+            </svg>
+            <div onMouseMove="{{ onChartMove }}" onMouseLeave="{{ onChartLeave }}" style="position:absolute;inset:0;cursor:crosshair;"></div>
+            <sc-if value="{{ chartHover }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:-4px;left:{{ htLeft }}px;background:#16181d;border:1px solid #2a3038;border-radius:9px;padding:7px 11px;pointer-events:none;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.4);">
+                <div class="serif" style="font-size:18px;line-height:1;color:{{ htColor }};">{{ htText }}</div>
+                <div class="num" style="font-size:9.5px;color:#8a909c;margin-top:4px;">{{ htDate }}</div>
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ hasByStrat }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;border-top:1px solid #181b22;padding-top:16px;">
+            <div class="num" style="font-size:9.5px;letter-spacing:.14em;color:#727885;text-transform:uppercase;margin-bottom:12px;">P&amp;L por estrategia · mejor bias: {{ bestBiasLabel }}</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <sc-for list="{{ byStrat }}" as="b" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:9px;background:#0e1014;border:1px solid #1a1d24;border-radius:10px;padding:9px 13px;">
+                  <span class="num" style="font-size:11px;color:{{ b.tag }};font-weight:600;">{{ b.short }}</span>
+                  <span class="num" style="font-size:13px;color:{{ b.pnlColor }};">{{ b.pnl }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+        <div style="padding:24px 2px 18px 30px;">
+          <div style="font-weight:600;font-size:15px;margin-bottom:6px;">Métricas del sistema</div>
+          <div class="num" style="font-size:9.5px;color:#565d6a;margin-bottom:8px;">medido como gestor — el win rate solo no dice la verdad</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="12">
+              <div style="padding:13px 0;border-bottom:1px solid #181b22;border-right:1px solid #181b22;padding-right:14px;">
+                <div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">{{ k.label }}</div>
+                <div class="serif" style="font-size:23px;color:{{ k.color }};line-height:1;margin-top:6px;">{{ k.val }}</div>
+                <div style="font-size:10px;color:#565d6a;margin-top:5px;line-height:1.35;">{{ k.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ====== JOURNAL ====== -->
+    <sc-if value="{{ isJournal }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:14px 40px 48px;max-width:1300px;animation:tlf .35s ease both;">
+      <!-- toolbar -->
+      <div style="border-top:1px solid #1a1d24;padding:18px 2px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button onClick="{{ prevMonth }}" style="width:34px;height:34px;border:1px solid #1c2028;background:#0e1014;color:#c9cdd6;border-radius:9px;cursor:pointer;font-size:15px;" style-hover="border-color:#2a3038;">‹</button>
+          <div style="min-width:150px;text-align:center;"><span class="serif" style="font-size:20px;">{{ calMonthLabel }}</span></div>
+          <button onClick="{{ nextMonth }}" style="width:34px;height:34px;border:1px solid #1c2028;background:#0e1014;color:#c9cdd6;border-radius:9px;cursor:pointer;font-size:15px;" style-hover="border-color:#2a3038;">›</button>
+          <span class="num" style="font-size:14px;color:{{ calMonthColor }};margin-left:6px;">{{ calMonthPnl }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap;">
+          <select value="{{ jTicker }}" onChange="{{ setJTicker }}" class="num" style="background:#0e1014;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#c9cdd6;font-size:12px;outline:none;cursor:pointer;"><sc-for list="{{ tickerOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select>
+          <select value="{{ jStrat }}" onChange="{{ setJStrat }}" class="num" style="background:#0e1014;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#c9cdd6;font-size:12px;outline:none;cursor:pointer;"><sc-for list="{{ stratFilterOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select>
+          <div style="display:flex;background:#0e1014;border:1px solid #1c2028;border-radius:9px;padding:3px;">
+            <button onClick="{{ setCalendar }}" style="border:0;background:{{ jCalBg }};color:{{ jCalColor }};font-weight:600;font-size:12px;padding:7px 13px;border-radius:7px;cursor:pointer;">Calendario</button>
+            <button onClick="{{ setList }}" style="border:0;background:{{ jListBg }};color:{{ jListColor }};font-weight:600;font-size:12px;padding:7px 13px;border-radius:7px;cursor:pointer;">Lista</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:{{ jGridCols }};gap:0;border-top:1px solid #1a1d24;">
+        <!-- left: calendar or list -->
+        <div style="padding:22px 30px 22px 2px;{{ jLeftBorder }}">
+          <!-- CALENDAR -->
+          <sc-if value="{{ jCalendar }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:7px;">
+              <sc-for list="{{ dow }}" as="d" hint-placeholder-count="7"><div class="num" style="text-align:center;font-size:10px;letter-spacing:.1em;color:#454c58;padding-bottom:4px;">{{ d }}</div></sc-for>
+              <sc-for list="{{ days }}" as="c" hint-placeholder-count="35">
+                <div onClick="{{ c.onClick }}" style="min-height:84px;border-radius:10px;background:{{ c.bg }};border:1px solid {{ c.border }};padding:9px 11px;display:flex;flex-direction:column;cursor:{{ c.cursor }};">
+                  <span class="num" style="font-size:11px;color:{{ c.numColor }};">{{ c.num }}</span>
+                  <sc-if value="{{ c.has }}" hint-placeholder-val="{{ false }}">
+                    <span class="serif" style="margin-top:auto;font-size:17px;color:{{ c.pnlColor }};line-height:1;">{{ c.pnl }}</span>
+                    <span class="num" style="font-size:9px;color:#565d6a;margin-top:3px;">{{ c.count }}</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <!-- LIST -->
+          <sc-if value="{{ jList }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ noTrades }}" hint-placeholder-val="{{ false }}"><div style="padding:50px 0;text-align:center;color:#565d6a;font-size:13px;">Sin operaciones con estos filtros.</div></sc-if>
+            <sc-if value="{{ hasRows }}" hint-placeholder-val="{{ true }}">
+            <div class="num" style="display:grid;grid-template-columns:108px 1fr 70px 100px 100px 90px;gap:12px;font-size:9px;letter-spacing:.1em;color:#565d6a;text-transform:uppercase;padding:8px 0;border-bottom:1px solid #1a1d24;">
+              <span>Fecha</span><span>Ticker</span><span>Estrat</span><span>Strikes</span><span style="text-align:right;">P&amp;L</span><span></span>
+            </div>
+            <sc-for list="{{ tradeRows }}" as="t" hint-placeholder-count="10">
+              <div style="display:grid;grid-template-columns:108px 1fr 70px 100px 100px 90px;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #181b22;">
+                <span class="num" style="font-size:12px;color:#727885;">{{ t.date }}</span>
+                <span class="num" style="font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:7px;">{{ t.ticker }}<sc-if value="{{ t.isHedge }}" hint-placeholder-val="{{ false }}"><span class="num" style="font-size:8px;color:#fb923c;border:1px solid #5a3f16;padding:2px 5px;border-radius:5px;">HEDGE</span></sc-if></span>
+                <span class="num" style="font-size:11px;color:{{ t.tagColor }};">{{ t.strat }}</span>
+                <span class="num" style="font-size:11px;color:#727885;">{{ t.strikes }}</span>
+                <span class="serif" style="font-size:18px;text-align:right;color:{{ t.pnlColor }};">{{ t.pnl }}</span>
+                <div><div style="height:5px;border-radius:3px;background:#161b22;overflow:hidden;width:100%;"><div style="height:100%;width:{{ t.barPct }}%;background:{{ t.pnlColor }};border-radius:3px;margin-left:{{ t.barOffset }}%;"></div></div></div>
+              </div>
+            </sc-for>
+            </sc-if>
+          </sc-if>
+        </div>
+
+        <!-- right: day detail (only when a day is selected) -->
+        <sc-if value="{{ hasDay }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:22px 2px 22px 30px;">
+          <div style="position:sticky;top:20px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+              <div><div class="serif" style="font-size:22px;line-height:1;">{{ dayLabel }}</div><div class="num" style="font-size:11px;color:#565d6a;margin-top:5px;">{{ dayCount }} operación(es)</div></div>
+              <button onClick="{{ clearDay }}" style="border:0;background:#16181d;color:#8a909c;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;">✕</button>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:8px;margin:10px 0 16px;"><span class="num" style="font-size:10px;color:#727885;text-transform:uppercase;letter-spacing:.1em;">Neto del día</span><span class="serif" style="font-size:26px;color:{{ dayPnlColor }};">{{ dayPnl }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <sc-for list="{{ dayDetail }}" as="d" hint-placeholder-count="2">
+                <div style="background:#0e1014;border:1px solid #1a1d24;border-radius:12px;padding:13px 15px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span class="num" style="font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px;">{{ d.ticker }}<span class="num" style="font-size:10px;color:{{ d.tagColor }};border:1px solid #2a3038;padding:2px 7px;border-radius:5px;">{{ d.strat }}</span><sc-if value="{{ d.isHedge }}" hint-placeholder-val="{{ false }}"><span class="num" style="font-size:8px;color:#fb923c;border:1px solid #5a3f16;padding:2px 5px;border-radius:5px;">HEDGE</span></sc-if></span>
+                    <span class="serif" style="font-size:21px;color:{{ d.pnlColor }};">{{ d.pnl }}</span>
+                  </div>
+                  <div class="num" style="font-size:11px;color:#565d6a;margin-top:8px;">Strikes {{ d.strikes }} · {{ d.contracts }} contrato(s)</div>
+                  <sc-if value="{{ d.notes }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#9aa0ac;margin-top:6px;line-height:1.45;font-style:italic;">{{ d.notes }}</div></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ====== DESPLIEGUES ====== -->
+    <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:14px 40px 48px;max-width:1300px;animation:tlf .35s ease both;">
+      <sc-if value="{{ noDeps }}" hint-placeholder-val="{{ true }}">
+        <div style="border-top:1px solid #1a1d24;padding:70px 20px;text-align:center;">
+          <div class="serif" style="font-size:26px;color:#3a4150;">Sin despliegues activos</div>
+          <p style="font-size:14px;color:#727885;max-width:420px;margin:12px auto 22px;line-height:1.6;">Evalúa un setup en la Scorecard y guárdalo como despliegue para monitorearlo aquí con señales y directivas.</p>
+          <button onClick="{{ goScore }}" style="border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:10px;cursor:pointer;">Evaluar un setup</button>
+        </div>
+      </sc-if>
+      <sc-for list="{{ positions }}" as="p" hint-placeholder-count="2">
+        <div style="border-top:1px solid #1a1d24;padding:26px 2px;display:grid;grid-template-columns:230px 1fr 250px;gap:30px;align-items:start;">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="serif" style="font-size:30px;line-height:1;">{{ p.ticker }}</span>
+              <span class="num" style="font-size:11px;color:{{ p.tagColor }};border:1px solid #2a3038;padding:3px 8px;border-radius:6px;">{{ p.strat }}</span>
+            </div>
+            <div class="num" style="font-size:11px;color:#565d6a;margin-top:11px;line-height:1.7;">{{ p.meta }}</div>
+            <sc-if value="{{ p.stale }}" hint-placeholder-val="{{ false }}"><div class="num" style="display:inline-block;margin-top:12px;font-size:10px;color:#f5a623;border:1px solid #5a4716;padding:5px 11px;border-radius:20px;">STALE · actualizar</div></sc-if>
+          </div>
+          <div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+              <div style="padding-right:18px;border-right:1px solid #181b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Profit</div><div class="serif" style="font-size:27px;color:{{ p.pnlColor }};margin-top:6px;line-height:1;">{{ p.profit }}</div><div style="font-size:10.5px;color:#565d6a;margin-top:6px;">TP {{ p.tp }}</div></div>
+              <div style="padding:0 18px;border-right:1px solid #181b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">No realizado</div><div class="serif" style="font-size:27px;color:{{ p.pnlColor }};margin-top:6px;line-height:1;">{{ p.unreal }}</div><div style="font-size:10.5px;color:#565d6a;margin-top:6px;">marca a mercado</div></div>
+              <div style="padding-left:18px;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Tiempo</div><div class="serif" style="font-size:27px;margin-top:6px;line-height:1;">{{ p.timePctLabel }}</div><div style="font-size:10.5px;color:#565d6a;margin-top:6px;">{{ p.timeLabel }}</div></div>
+            </div>
+            <div style="height:4px;border-radius:3px;background:#181b22;margin-top:18px;overflow:hidden;"><div style="height:100%;width:{{ p.timePct }}%;background:{{ p.timeColor }};border-radius:3px;"></div></div>
+            <div style="margin-top:16px;background:{{ p.dirBg }};border:1px solid {{ p.dirBorder }};border-radius:12px;padding:13px 15px;">
+              <div style="font-weight:600;font-size:13px;color:{{ p.dirColor }};">{{ p.dirTitle }}</div>
+              <div style="font-size:12px;color:#9aa0ac;margin-top:3px;line-height:1.45;">{{ p.dirSub }}</div>
+            </div>
+            <sc-if value="{{ p.hasSignals }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">
+              <sc-for list="{{ p.signals }}" as="sg" hint-placeholder-count="2">
+                <div style="display:flex;gap:9px;align-items:flex-start;font-size:12px;color:#aab0bb;"><span style="color:{{ sg.color }};flex:none;">●</span><span>{{ sg.text }}</span></div>
+              </sc-for>
+            </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <button onClick="{{ p.onClose }}" style="border:0;background:{{ p.closeBg }};color:{{ p.closeColor }};font-weight:600;font-size:13.5px;padding:12px;border-radius:9px;cursor:pointer;">Cerrar posición</button>
+            <button onClick="{{ p.onUpdate }}" style="border:1px solid #1c2028;background:transparent;color:#8a909c;font-weight:500;font-size:13.5px;padding:12px;border-radius:9px;cursor:pointer;" style-hover="color:#eef1f5;border-color:#2a3038;">Actualizar precio</button>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ hasDeps }}" hint-placeholder-val="{{ false }}"><div style="border-top:1px solid #1a1d24;"></div></sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ====== SCORECARD ====== -->
+    <sc-if value="{{ isScore }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:14px 40px 48px;max-width:1300px;animation:tlf .35s ease both;">
+      <div style="border-top:1px solid #1a1d24;padding:20px 2px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+        <span class="num" style="font-size:9.5px;letter-spacing:.14em;color:#727885;text-transform:uppercase;">Estructura</span>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;">
+          <sc-for list="{{ stratTabs }}" as="t" hint-placeholder-count="5">
+            <button onClick="{{ t.go }}" style="border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;padding:8px 13px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:7px;"><span style="opacity:.6;">{{ t.bias }}</span>{{ t.short }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:0;border-top:1px solid #1a1d24;">
+        <!-- criteria + inputs -->
+        <div style="padding:24px 34px 24px 2px;border-right:1px solid #1a1d24;">
+          <div class="serif" style="font-size:23px;">{{ stratLabel }}</div>
+          <div style="font-size:12.5px;color:#727885;margin:4px 0 18px;">{{ stratHint }}</div>
+
+          <!-- setup inputs -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:6px;">
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Ticker</div><input value="{{ f.ticker }}" onChange="{{ onF.ticker }}" placeholder="META" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;text-transform:uppercase;" style-focus="border-color:#f5a623;" /></div>
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Spot $</div><input type="number" value="{{ f.spot }}" onChange="{{ onF.spot }}" placeholder="605" class="num" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Expiración</div><input type="date" value="{{ f.expiry }}" onChange="{{ onF.expiry }}" class="num" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:6px;">
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Strike corto</div><input type="number" value="{{ f.strikeShort }}" onChange="{{ onF.strikeShort }}" placeholder="590" class="num" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Strike largo</div><input type="number" value="{{ f.strikeLong }}" onChange="{{ onF.strikeLong }}" placeholder="585" class="num" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">{{ premLabel }}</div><input type="number" value="{{ f.premium }}" onChange="{{ onF.premium }}" placeholder="1.20" class="num" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Contratos</div><input type="number" value="{{ f.contracts }}" onChange="{{ onF.contracts }}" placeholder="1" class="num" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 3fr;gap:10px;margin-bottom:22px;">
+            <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">IVR %</div><input type="number" value="{{ f.ivr }}" onChange="{{ onF.ivr }}" placeholder="45" class="num" style="width:100%;background:#0e0f13;border:1px solid #1c2028;border-radius:9px;padding:9px 11px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+            <div></div>
+          </div>
+
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+            <div style="font-weight:600;font-size:14px;">Criterios A+</div>
+            <span class="num" style="font-size:11px;color:#727885;">{{ answered }}/{{ totalCrit }} evaluados</span>
+          </div>
+          <div style="display:flex;flex-direction:column;">
+            <sc-for list="{{ criteria }}" as="c" hint-placeholder-count="8">
+              <div style="padding:16px 0;border-bottom:1px solid #161b22;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <span style="font-weight:600;font-size:13.5px;color:#dfe3ea;">{{ c.label }}</span>
+                  <span class="num" style="font-size:10px;color:#565d6a;white-space:nowrap;">peso ×{{ c.w }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <sc-for list="{{ c.opts }}" as="o" hint-placeholder-count="3">
+                    <button onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:1px solid {{ o.border }};background:{{ o.bg }};border-radius:10px;padding:10px 12px;cursor:pointer;">
+                      <span style="width:16px;height:16px;flex:none;border-radius:50%;border:1.5px solid {{ o.dot }};display:flex;align-items:center;justify-content:center;"><sc-if value="{{ o.sel }}" hint-placeholder-val="{{ false }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ o.dot }};"></span></sc-if></span>
+                      <span style="flex:1;font-size:12.5px;color:{{ o.text }};line-height:1.4;">{{ o.l }}</span>
+                      <span class="num" style="font-size:10.5px;color:{{ o.scoreColor }};">{{ o.sLabel }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- verdict + autocalc (sticky) -->
+        <div style="padding:24px 2px 24px 30px;">
+          <div style="position:sticky;top:20px;display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <div class="num" style="font-size:9.5px;letter-spacing:.14em;color:#727885;text-transform:uppercase;">Veredicto del setup</div>
+              <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px;"><span class="serif" style="font-size:64px;line-height:1;color:{{ verdictColor }};">{{ scorePct }}</span><span class="serif" style="font-size:26px;color:#454c58;">/100</span></div>
+              <div style="display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:{{ verdictBg }};border:1px solid {{ verdictBorder }};color:{{ verdictColor }};border-radius:20px;padding:7px 14px;font-weight:600;font-size:12.5px;">{{ verdictLabel }}</div>
+              <div style="height:5px;border-radius:4px;background:#161b22;margin-top:16px;overflow:hidden;"><div style="height:100%;width:{{ scorePct }}%;background:{{ verdictColor }};border-radius:4px;transition:width .3s;"></div></div>
+              <div class="num" style="display:flex;justify-content:space-between;font-size:9.5px;color:#454c58;margin-top:6px;"><span>RECHAZAR</span><span>VIABLE 65</span><span>A+ 85</span></div>
+            </div>
+
+            <div style="border-top:1px solid #1a1d24;padding-top:18px;">
+              <div class="num" style="font-size:9.5px;letter-spacing:.14em;color:#727885;text-transform:uppercase;margin-bottom:12px;">Cálculo automático</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+                <div style="padding:13px 16px 13px 0;border-right:1px solid #161b22;border-bottom:1px solid #161b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">DTE</div><div class="serif" style="font-size:22px;margin-top:5px;color:{{ dteColor }};">{{ dteStr }}</div></div>
+                <div style="padding:13px 0 13px 16px;border-bottom:1px solid #161b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Dist. {{ distDir }}</div><div class="serif" style="font-size:22px;margin-top:5px;color:{{ distColor }};">{{ distStr }}</div></div>
+                <div style="padding:13px 16px 13px 0;border-right:1px solid #161b22;border-bottom:1px solid #161b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">{{ premName }}</div><div class="serif" style="font-size:22px;margin-top:5px;color:{{ premColor }};">{{ premQuality }}</div></div>
+                <div style="padding:13px 0 13px 16px;border-bottom:1px solid #161b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">R / R</div><div class="serif" style="font-size:22px;margin-top:5px;color:{{ rrColor }};">{{ rrStr }}</div></div>
+                <div style="padding:13px 16px 13px 0;border-right:1px solid #161b22;border-bottom:1px solid #161b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Max profit</div><div class="serif" style="font-size:22px;margin-top:5px;color:#34d399;">{{ maxProfit }}</div></div>
+                <div style="padding:13px 0 13px 16px;border-bottom:1px solid #161b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Max loss</div><div class="serif" style="font-size:22px;margin-top:5px;color:#ef5a78;">{{ maxLoss }}</div></div>
+                <div style="padding:13px 16px 13px 0;border-right:1px solid #161b22;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Breakeven</div><div class="serif" style="font-size:22px;margin-top:5px;">{{ beStr }}</div></div>
+                <div style="padding:13px 0 13px 16px;"><div class="num" style="font-size:9px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Foso a BE</div><div class="serif" style="font-size:22px;margin-top:5px;color:#f5a623;">{{ fosoStr }}</div></div>
+              </div>
+            </div>
+
+            <button onClick="{{ saveSetup }}" style="border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Guardar como despliegue</button>
+            <button onClick="{{ resetScore }}" style="border:1px solid #1c2028;background:transparent;color:#8a909c;font-weight:500;font-size:13px;padding:11px;border-radius:10px;cursor:pointer;" style-hover="color:#eef1f5;border-color:#2a3038;">Reiniciar evaluación</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ====== CAPITAL ====== -->
+    <sc-if value="{{ isCapital }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:14px 40px 48px;max-width:1300px;animation:tlf .35s ease both;">
+      <sc-if value="{{ noCapital }}" hint-placeholder-val="{{ true }}">
+        <div style="border-top:1px solid #1a1d24;padding:70px 20px;text-align:center;">
+          <div class="serif" style="font-size:26px;color:#3a4150;">Capital sin configurar</div>
+          <p style="font-size:14px;color:#727885;max-width:440px;margin:12px auto 22px;line-height:1.6;">Define el punto de partida de tus tres compartimentos: Operativo, Patrimonio y Bóveda. (Si restauras tu respaldo, se cargan solos.)</p>
+          <button onClick="{{ openCapitalSetup }}" style="border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:13.5px;padding:11px 20px;border-radius:10px;cursor:pointer;">Configurar capital</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasCapital }}" hint-placeholder-val="{{ false }}">
+        <div style="border-top:1px solid #1a1d24;border-bottom:1px solid #1a1d24;padding:22px 2px;display:flex;align-items:center;gap:30px;">
+          <div style="flex:none;">
+            <div class="num" style="font-size:10px;letter-spacing:.16em;color:#727885;text-transform:uppercase;">Capital total</div>
+            <div class="serif" style="font-size:52px;line-height:1;margin-top:6px;">{{ capTotal }}</div>
+            <sc-if value="{{ hasGrowth }}" hint-placeholder-val="{{ false }}"><div class="num" style="font-size:12px;color:{{ capGrowthColor }};margin-top:8px;">{{ capGrowth }} vs inicio ({{ capInitial }})</div></sc-if>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+            <div style="padding:0 22px;border-left:1px solid #1a1d24;"><div class="num" style="font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">⛁ Operativo</div><div class="serif" style="font-size:26px;margin-top:7px;color:#f5a623;">{{ capOp }}</div><div class="num" style="font-size:10px;color:#565d6a;margin-top:4px;">motor de flujo</div></div>
+            <div style="padding:0 22px;border-left:1px solid #1a1d24;"><div class="num" style="font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">▣ Patrimonio</div><div class="serif" style="font-size:26px;margin-top:7px;color:#5ec2e8;">{{ capPat }}</div><div class="num" style="font-size:10px;color:#565d6a;margin-top:4px;">swings + acciones</div></div>
+            <div style="padding:0 22px;border-left:1px solid #1a1d24;"><div class="num" style="font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">⛉ Bóveda</div><div class="serif" style="font-size:26px;margin-top:7px;color:#c9cdd6;">{{ capBov }}</div><div class="num" style="font-size:10px;color:#565d6a;margin-top:4px;">base intacta</div></div>
+          </div>
+        </div>
+
+        <!-- allocation bar -->
+        <sc-if value="{{ hasAlloc }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:22px 2px;border-bottom:1px solid #1a1d24;">
+          <div class="num" style="font-size:9.5px;letter-spacing:.14em;color:#727885;text-transform:uppercase;margin-bottom:12px;">Asignación entre compartimentos</div>
+          <div style="display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;">
+            <sc-for list="{{ allocSlices }}" as="a" hint-placeholder-count="3"><div style="width:{{ a.pct }}%;background:{{ a.color }};"></div></sc-for>
+          </div>
+          <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;">
+            <sc-for list="{{ allocSlices }}" as="a" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:2px;background:{{ a.color }};"></span><span style="font-size:12px;color:#aab0bb;">{{ a.label }}</span><span class="num" style="font-size:12px;color:#727885;">{{ a.pctStr }}</span></div></sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="padding:24px 2px;border-bottom:1px solid #1a1d24;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-weight:600;font-size:15px;">Despliegue del operativo</div><button onClick="{{ openMoveCapital }}" style="border:1px solid #1c2028;background:transparent;color:#c9cdd6;font-weight:600;font-size:12.5px;padding:8px 14px;border-radius:9px;cursor:pointer;" style-hover="border-color:#2a3038;">Mover capital</button></div>
+          <div style="display:flex;height:34px;border-radius:9px;overflow:hidden;border:1px solid #1c2028;">
+            <div style="width:{{ deployedPct }}%;background:linear-gradient(150deg,#fbbf3b,#f59016);display:flex;align-items:center;justify-content:center;color:#1a1205;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;min-width:48px;">{{ deployedStr }}</div>
+            <div style="flex:1;background:#131519;display:flex;align-items:center;justify-content:center;color:#727885;font-family:'JetBrains Mono',monospace;font-size:11px;">PÓLVORA SECA · {{ reserveStr }}</div>
+          </div>
+          <div class="num" style="display:flex;justify-content:space-between;font-size:9.5px;color:#565d6a;margin-top:7px;"><span>EN RIESGO ({{ depCount }} despliegues)</span><span>RESERVA</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:0;">
+          <!-- patrimonio -->
+          <div style="padding:24px 30px 24px 2px;border-right:1px solid #1a1d24;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div style="font-weight:600;font-size:15px;">Patrimonio · posiciones</div><button onClick="{{ openAddStock }}" style="border:1px solid #1c2028;background:transparent;color:#c9cdd6;font-weight:600;font-size:12.5px;padding:8px 14px;border-radius:9px;cursor:pointer;" style-hover="border-color:#2a3038;">+ Posición</button></div>
+            <div class="num" style="font-size:11px;color:#565d6a;margin-bottom:12px;">valor {{ stocksValStr }} · efectivo {{ patCashStr }} · G/L <span style="color:{{ stocksGLColor }};">{{ stocksGLStr }}</span></div>
+            <sc-if value="{{ noStocks }}" hint-placeholder-val="{{ true }}"><div style="padding:30px 0;text-align:center;color:#565d6a;font-size:13px;">Sin posiciones de patrimonio.</div></sc-if>
+            <sc-if value="{{ hasStocks }}" hint-placeholder-val="{{ false }}">
+            <div class="num" style="display:grid;grid-template-columns:1fr 60px 80px 90px 90px;gap:10px;font-size:9px;letter-spacing:.1em;color:#565d6a;text-transform:uppercase;padding:8px 0;border-bottom:1px solid #1a1d24;"><span>Ticker</span><span>Acc</span><span>Entrada</span><span style="text-align:right;">Valor</span><span style="text-align:right;">G/L</span></div>
+            <sc-for list="{{ stockRows }}" as="st" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:1fr 60px 80px 90px 90px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #181b22;">
+                <div class="num" style="font-weight:600;font-size:13.5px;">{{ st.ticker }}</div>
+                <span class="num" style="font-size:11.5px;color:#727885;">{{ st.shares }}</span>
+                <span class="num" style="font-size:11.5px;color:#727885;">${{ st.entry }}</span>
+                <span class="num" style="font-size:12px;text-align:right;color:#c9cdd6;">{{ st.mv }}</span>
+                <span style="text-align:right;"><div class="serif" style="font-size:16px;color:{{ st.glColor }};line-height:1;">{{ st.gl }}</div><div class="num" style="font-size:9.5px;color:{{ st.glColor }};margin-top:2px;">{{ st.glPct }}</div></span>
+              </div>
+            </sc-for>
+            </sc-if>
+          </div>
+          <!-- movements ledger -->
+          <div style="padding:24px 2px 24px 30px;">
+            <div style="font-weight:600;font-size:15px;margin-bottom:12px;">Movimientos de capital</div>
+            <sc-if value="{{ noMoves }}" hint-placeholder-val="{{ true }}"><div style="padding:30px 0;text-align:center;color:#565d6a;font-size:13px;">Sin movimientos registrados.</div></sc-if>
+            <sc-for list="{{ moveRows }}" as="mv" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #181b22;">
+                <div style="flex:1;"><div style="font-size:13px;color:#c9cdd6;display:flex;align-items:center;gap:7px;">{{ mv.from }} <span style="color:#565d6a;">→</span> {{ mv.to }}</div><div class="num" style="font-size:10.5px;color:#565d6a;margin-top:3px;">{{ mv.date }}<sc-if value="{{ mv.reason }}" hint-placeholder-val="{{ false }}"> · {{ mv.reason }}</sc-if></div></div>
+                <span class="num" style="font-size:14px;color:#f5a623;">{{ mv.amount }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ====== CONSTITUCIÓN ====== -->
+    <sc-if value="{{ isConst }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:14px 40px 60px;max-width:900px;animation:tlf .35s ease both;">
+      <div style="border-top:1px solid #1a1d24;padding-top:26px;">
+        <sc-for list="{{ articles }}" as="a" hint-placeholder-count="11">
+          <div style="margin-bottom:30px;">
+            <div class="num" style="font-size:11px;font-weight:600;color:#f5a623;letter-spacing:.05em;">Artículo {{ a.num }}</div>
+            <div class="serif" style="font-size:28px;margin-top:6px;letter-spacing:-.01em;">{{ a.title }}</div>
+            <div style="font-size:13px;color:#727885;font-style:italic;margin-top:5px;">{{ a.sub }}</div>
+            <sc-if value="{{ a.lead }}" hint-placeholder-val="{{ false }}"><p class="serif" style="font-size:19px;color:#e8c98a;line-height:1.45;margin:16px 0 0;">{{ a.lead }}</p></sc-if>
+            <sc-if value="{{ a.body }}" hint-placeholder-val="{{ true }}"><p style="font-size:14px;color:#aab0bb;line-height:1.65;margin:12px 0 0;">{{ a.body }}</p></sc-if>
+            <sc-if value="{{ a.call }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;border-left:3px solid #f5a623;padding:2px 0 2px 16px;"><div style="font-size:14px;color:#dfe3ea;line-height:1.55;">{{ a.call }}</div></div></sc-if>
+          </div>
+        </sc-for>
+        <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(252,211,77,0.03));border:1px solid rgba(245,158,11,0.35);border-radius:16px;padding:28px;text-align:center;">
+          <div class="serif" style="font-size:24px;color:#e8c98a;margin-bottom:16px;">El Compromiso</div>
+          <sc-for list="{{ compromiso }}" as="c" hint-placeholder-count="8"><p style="font-size:14.5px;color:#dfe3ea;margin:0 0 8px;line-height:1.5;">{{ c }}</p></sc-for>
+          <div class="num" style="font-size:11px;color:#f5a623;margin-top:16px;letter-spacing:.05em;">Ricardo · Gestor de Capital · 2026</div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+  </main>
+
+  <!-- ============ MODALS ============ -->
+  <sc-if value="{{ showModal }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeModal }}" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:center;justify-content:center;padding:30px;">
+    <div onClick="{{ stop }}" style="background:#0e1014;border:1px solid #1f232c;border-radius:18px;width:100%;max-width:{{ modalWidth }};max-height:86vh;overflow-y:auto;padding:26px 28px;animation:mdl .25s ease both;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+        <div><div class="serif" style="font-size:24px;">{{ modalTitle }}</div><div style="font-size:12.5px;color:#727885;margin-top:3px;">{{ modalSub }}</div></div>
+        <button onClick="{{ closeModal }}" style="border:0;background:#16181d;color:#8a909c;width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:16px;">✕</button>
+      </div>
+
+      <!-- RESTORE -->
+      <sc-if value="{{ mRestore }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;color:#aab0bb;line-height:1.6;margin-bottom:14px;">Pega aquí el contenido de tu respaldo <span class="num" style="color:#f5a623;">.json</span> (formato <span class="num">{data:{…}}</span> o estado plano). Se guardará en este navegador.</div>
+        <textarea value="{{ restoreText }}" onChange="{{ onRestoreText }}" rows="9" placeholder='{ "version":"tl_v1", "data":{ "trades":[…], "deployments":[…], "capital":{…} } }' class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:10px;padding:12px;color:#eef1f5;font-size:12px;line-height:1.5;outline:none;" style-focus="border-color:#f5a623;"></textarea>
+        <sc-if value="{{ restoreErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#ef5a78;margin-top:10px;">{{ restoreErr }}</div></sc-if>
+        <button onClick="{{ doRestore }}" style="margin-top:16px;width:100%;border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Restaurar datos</button>
+      </sc-if>
+
+      <!-- ADD TRADE -->
+      <sc-if value="{{ mTrade }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Fecha</div><input type="date" value="{{ tf.date }}" onChange="{{ onT.date }}" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Ticker</div><input value="{{ tf.ticker }}" onChange="{{ onT.ticker }}" placeholder="META" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;text-transform:uppercase;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Estrategia</div><select value="{{ tf.strat }}" onChange="{{ onT.strat }}" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;"><sc-for list="{{ stratOptions }}" as="so" hint-placeholder-count="5"><option value="{{ so.v }}">{{ so.l }}</option></sc-for></select></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Strikes</div><input value="{{ tf.strikes }}" onChange="{{ onT.strikes }}" placeholder="590/585" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">P&amp;L $</div><input type="number" value="{{ tf.pnl }}" onChange="{{ onT.pnl }}" placeholder="104" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Contratos</div><input type="number" value="{{ tf.contracts }}" onChange="{{ onT.contracts }}" placeholder="1" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:9px;margin-top:14px;font-size:13px;color:#aab0bb;cursor:pointer;"><input type="checkbox" checked="{{ tf.isHedge }}" onChange="{{ onT.isHedge }}" style="width:16px;height:16px;accent-color:#f5a623;" />Es cobertura (no cuenta en win rate)</label>
+        <button onClick="{{ doAddTrade }}" style="margin-top:18px;width:100%;border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Registrar en Journal</button>
+      </sc-if>
+
+      <!-- UPDATE DEPLOYMENT -->
+      <sc-if value="{{ mUpdate }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Precio actual del contrato $</div><input type="number" value="{{ uf.currentPrice }}" onChange="{{ onU.currentPrice }}" placeholder="0.60" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Spot actual</div><input type="number" value="{{ uf.currentSpot }}" onChange="{{ onU.currentSpot }}" placeholder="612" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">IV actual %</div><input type="number" value="{{ uf.currentIv }}" onChange="{{ onU.currentIv }}" placeholder="28" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Δ delta short</div><input type="number" value="{{ uf.currentDelta }}" onChange="{{ onU.currentDelta }}" placeholder="0.12" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+        </div>
+        <button onClick="{{ doUpdateDep }}" style="margin-top:18px;width:100%;border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Guardar actualización</button>
+      </sc-if>
+
+      <!-- CLOSE DEPLOYMENT -->
+      <sc-if value="{{ mClose }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;color:#aab0bb;line-height:1.6;margin-bottom:14px;">Se moverá al Journal como trade cerrado.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">P&amp;L final $</div><input type="number" value="{{ cf.finalPnl }}" onChange="{{ onC.finalPnl }}" placeholder="48" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Fecha de cierre</div><input type="date" value="{{ cf.closeDate }}" onChange="{{ onC.closeDate }}" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+        </div>
+        <button onClick="{{ doCloseDep }}" style="margin-top:18px;width:100%;border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Cerrar y registrar</button>
+      </sc-if>
+
+      <!-- CAPITAL SETUP -->
+      <sc-if value="{{ mCapital }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">⛁ Operativo $</div><input type="number" value="{{ capf.operativo }}" onChange="{{ onCap.operativo }}" placeholder="7000" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">▣ Patrimonio $</div><input type="number" value="{{ capf.patrimonio }}" onChange="{{ onCap.patrimonio }}" placeholder="8000" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">⛉ Bóveda $</div><input type="number" value="{{ capf.boveda }}" onChange="{{ onCap.boveda }}" placeholder="10000" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+        </div>
+        <button onClick="{{ doCapitalSetup }}" style="margin-top:18px;width:100%;border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Establecer punto de partida</button>
+      </sc-if>
+
+      <!-- ADD STOCK -->
+      <sc-if value="{{ mStock }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Ticker</div><input value="{{ sf.ticker }}" onChange="{{ onS.ticker }}" placeholder="HOOD" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;text-transform:uppercase;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Acciones</div><input type="number" value="{{ sf.shares }}" onChange="{{ onS.shares }}" placeholder="30" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Precio entrada $</div><input type="number" value="{{ sf.entry }}" onChange="{{ onS.entry }}" placeholder="76.48" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Precio actual $</div><input type="number" value="{{ sf.current }}" onChange="{{ onS.current }}" placeholder="95.60" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+        </div>
+        <button onClick="{{ doAddStock }}" style="margin-top:18px;width:100%;border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Agregar posición</button>
+      </sc-if>
+
+      <!-- MOVE CAPITAL -->
+      <sc-if value="{{ mMove }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Desde</div><select value="{{ mvf.from }}" onChange="{{ onMv.from }}" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;"><option value="operativo">Operativo</option><option value="patrimonio">Patrimonio</option><option value="boveda">Bóveda</option><option value="externo">Externo</option></select></div>
+          <div><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Hacia</div><select value="{{ mvf.to }}" onChange="{{ onMv.to }}" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;"><option value="boveda">Bóveda</option><option value="operativo">Operativo</option><option value="patrimonio">Patrimonio</option><option value="externo">Externo</option></select></div>
+        </div>
+        <div style="margin-top:12px;"><div style="font-size:10.5px;color:#727885;margin-bottom:5px;">Monto $</div><input type="number" value="{{ mvf.amount }}" onChange="{{ onMv.amount }}" placeholder="500" class="num" style="width:100%;background:#0a0b0e;border:1px solid #1c2028;border-radius:9px;padding:10px;color:#eef1f5;font-size:13px;outline:none;" style-focus="border-color:#f5a623;" /></div>
+        <button onClick="{{ doMoveCapital }}" style="margin-top:18px;width:100%;border:0;background:linear-gradient(150deg,#fbbf3b,#f59016);color:#1a1205;font-weight:600;font-size:14px;padding:13px;border-radius:10px;cursor:pointer;">Confirmar movimiento</button>
+      </sc-if>
+
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- toast -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#16181d;border:1px solid #2c6b4f;color:#34d399;padding:12px 20px;border-radius:11px;font-size:13.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.4);">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1300,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = {
+    screen:'overview', loaded:false,
+    data:{trades:[],drafts:[],deployments:[],capital:null,dark:true},
+    scoreSt:'pcs', answers:{},
+    f:{ticker:'',spot:'',strikeShort:'',strikeLong:'',ivr:'',expiry:'',premium:'',contracts:'1'},
+    modal:null, depId:null,
+    tf:{}, uf:{}, cf:{}, capf:{}, sf:{}, mvf:{},
+    restoreText:'', restoreErr:'', toast:null,
+    jMonth:null, jView:'calendar', jTicker:'all', jStrat:'all', jDay:null, hoverIdx:null,
+  };
+
+  // ── persistencia (misma clave que tu app) ──
+  componentDidMount(){
+    try{ const r=localStorage.getItem('tl_v1'); if(r){const d=JSON.parse(r); this.setState({data:{trades:d.trades||[],drafts:d.drafts||[],deployments:d.deployments||[],capital:d.capital||null,dark:d.dark!==false},loaded:true}); return;} }catch(e){}
+    this.setState({loaded:true});
+  }
+  persist(data){
+    try{ localStorage.setItem('tl_v1', JSON.stringify(data)); localStorage.setItem('tl_v1_ts', new Date().toISOString()); }catch(e){}
+    this.setState({data});
+  }
+  patchData(p){ const d={...this.state.data, ...p}; this.persist(d); return d; }
+  uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+  today(){ return new Date().toISOString().slice(0,10); }
+  showToast(t){ this.setState({toast:t}); clearTimeout(this._tt); this._tt=setTimeout(()=>this.setState({toast:null}),2600); }
+
+  go(s){ return ()=>this.setState({screen:s}); }
+
+  // ── journal controls ──
+  monthsWithData(){ const set={}; (this.state.data.trades||[]).forEach(t=>{if(t.date)set[t.date.slice(0,7)]=true;}); const ks=Object.keys(set).sort(); return ks; }
+  activeMonth(){ const m=this.state.jMonth; if(m)return m; const ks=this.monthsWithData(); return ks.length?ks[ks.length-1]:this.today().slice(0,7); }
+  shiftMonth(delta){ return ()=>{ const cur=this.activeMonth(); const [y,mo]=cur.split('-').map(Number); const d=new Date(y,mo-1+delta,1); const nm=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); this.setState({jMonth:nm,jDay:null}); }; }
+  setView(v){ return ()=>this.setState({jView:v,jDay:null}); }
+  setJTicker=(e)=>this.setState({jTicker:e.target.value,jDay:null});
+  setJStrat=(e)=>this.setState({jStrat:e.target.value,jDay:null});
+  selectDay(d){ return ()=>this.setState(st=>({jDay:st.jDay===d?null:d})); }
+  clearDay=()=>this.setState({jDay:null});
+  // ── chart hover ──
+  onChartMove=(e)=>{ const r=e.currentTarget.getBoundingClientRect(); const n=this._curveN||2; const x=e.clientX-r.left; let i=Math.round((x/r.width)*(n-1)); i=Math.max(0,Math.min(n-1,i)); if(i!==this.state.hoverIdx)this.setState({hoverIdx:i}); };
+  onChartLeave=()=>this.setState({hoverIdx:null});
+  openModal(m, extra){ return ()=>this.setState({modal:m, ...(extra||{})}); }
+  closeModal=()=>this.setState({modal:null,restoreErr:'',restoreText:''});
+  stop=(e)=>{ e.stopPropagation(); };
+
+  // ── motores (portados de tu App.jsx) ──
+  STRAT = {
+    pcs:{label:'Put Credit Spread',short:'PCS',bias:'↑',credit:true,tag:'#f5a623',hint:'Alcista · vendemos put OTM. Strike lejos por debajo = más seguro.'},
+    ccs:{label:'Call Credit Spread',short:'CCS',bias:'↓',credit:true,tag:'#ef5a78',hint:'Bajista · vendemos call OTM. Strike lejos por arriba = más seguro.'},
+    bcs:{label:'Bull Call Spread',short:'BCS',bias:'↑',credit:false,tag:'#5ec2e8',hint:'Alcista direccional · compramos call. Necesita catalizador y movimiento.'},
+    pds:{label:'Put Debit Spread',short:'PDS',bias:'↓',credit:false,tag:'#fb923c',hint:'Bajista direccional · compramos put. Necesita catalizador y caída.'},
+    ic:{label:'Iron Condor',short:'IC',bias:'→',credit:true,tag:'#a78bfa',hint:'Neutral · vendemos rango. Precio quieto entre ambos strikes.'},
+  };
+  SCORECARD = {
+    pcs:[
+      {id:'ivr',label:'IVR — vendemos volatilidad',w:3,opts:[{l:'IVR > 50% — volatilidad cara, ideal vender',s:3},{l:'IVR 35–50% — aceptable',s:2},{l:'IVR < 35% — prima muy barata',s:1}]},
+      {id:'ivhv',label:'IV vs HV — calidad del edge',w:3,opts:[{l:'IV >> HV — overpayment claro',s:3},{l:'IV > HV — edge moderado',s:2},{l:'IV ≈ HV — sin edge real',s:1},{l:'IV < HV — no vender prima',s:0}]},
+      {id:'rr',label:'R/R — profit / loss ratio',w:3,opts:[{l:'≥ 0.5 — excelente para crédito',s:3},{l:'0.33–0.5 — aceptable',s:2},{l:'0.20–0.33 — pobre',s:1},{l:'< 0.20 — rechazar',s:0}]},
+      {id:'prem',label:'Calidad de la prima (% del ancho)',w:2,opts:[{l:'≥ 33% — prima excelente',s:3},{l:'25–33% — aceptable',s:2},{l:'15–25% — magra',s:1},{l:'< 15% — no vale el riesgo',s:0}]},
+      {id:'dist',label:'Distancia strike corto vs precio',w:3,opts:[{l:'> 3% por debajo — foso amplio',s:3},{l:'2–3% por debajo — moderado',s:2},{l:'< 2% — muy cerca, riesgo alto',s:0}]},
+      {id:'dte',label:'DTE — tiempo a expiración',w:2,opts:[{l:'7–21 días — theta óptimo',s:3},{l:'21–45 días — aceptable',s:2},{l:'< 7 días — gamma riesgo alto',s:0}]},
+      {id:'entry',label:'Contexto de entrada',w:3,opts:[{l:'Retroceso 2–4% en tendencia alcista (dip en soporte)',s:3},{l:'Lateral consolidando en soporte',s:2},{l:'Tras subida fuerte — extensión, evitar',s:0}]},
+      {id:'supp',label:'Soporte bajo el strike',w:3,opts:[{l:'Soporte confirmado con piso estructural',s:3},{l:'Soporte histórico relevante',s:2},{l:'Sin soporte / air pocket',s:0}]},
+      {id:'risk',label:'Eventos en el DTE',w:3,opts:[{l:'Sin earnings ni macro relevante',s:3},{l:'Dato menor',s:1},{l:'Earnings dentro del DTE',s:0}]},
+    ],
+    ccs:[
+      {id:'ivr',label:'IVR — vendemos volatilidad',w:3,opts:[{l:'IVR > 50% — volatilidad cara, ideal vender',s:3},{l:'IVR 35–50% — aceptable',s:2},{l:'IVR < 35% — prima muy barata',s:1}]},
+      {id:'ivhv',label:'IV vs HV — calidad del edge',w:3,opts:[{l:'IV >> HV — overpayment claro',s:3},{l:'IV > HV — edge moderado',s:2},{l:'IV ≈ HV — sin edge real',s:1},{l:'IV < HV — no vender prima',s:0}]},
+      {id:'rr',label:'R/R — profit / loss ratio',w:3,opts:[{l:'≥ 0.5 — excelente para crédito',s:3},{l:'0.33–0.5 — aceptable',s:2},{l:'0.20–0.33 — pobre',s:1},{l:'< 0.20 — rechazar',s:0}]},
+      {id:'prem',label:'Calidad de la prima (% del ancho)',w:2,opts:[{l:'≥ 33% — prima excelente',s:3},{l:'25–33% — aceptable',s:2},{l:'15–25% — magra',s:1},{l:'< 15% — no vale el riesgo',s:0}]},
+      {id:'dist',label:'Distancia strike corto vs precio',w:3,opts:[{l:'> 3% por encima — foso amplio',s:3},{l:'2–3% por encima — moderado',s:2},{l:'< 2% — muy cerca, riesgo alto',s:0}]},
+      {id:'dte',label:'DTE — tiempo a expiración',w:2,opts:[{l:'7–21 días — theta óptimo',s:3},{l:'21–45 días — aceptable',s:2},{l:'< 7 días — gamma riesgo alto',s:0}]},
+      {id:'entry',label:'Contexto de entrada',w:3,opts:[{l:'Rebote 2–4% en tendencia bajista (a resistencia)',s:3},{l:'Lateral consolidando en resistencia',s:2},{l:'Tras caída fuerte — extensión, evitar',s:0}]},
+      {id:'res',label:'Resistencia sobre el strike',w:3,opts:[{l:'Resistencia confirmada con techo estructural',s:3},{l:'Resistencia histórica relevante',s:2},{l:'Sin resistencia / air pocket',s:0}]},
+      {id:'risk',label:'Eventos en el DTE',w:3,opts:[{l:'Sin earnings ni macro relevante',s:3},{l:'Dato menor',s:1},{l:'Earnings dentro del DTE',s:0}]},
+    ],
+    bcs:[
+      {id:'ivhv',label:'IV vs HV — el edge del débito',w:3,opts:[{l:'IV << HV — opciones baratas, edge gordo',s:3},{l:'IV < HV — favorable comprar',s:2},{l:'IV ≈ HV — sin edge',s:1},{l:'IV > HV — sobrepagas',s:0}]},
+      {id:'ivr',label:'IVR — nivel de volatilidad',w:2,opts:[{l:'IVR < 25% — prima barata',s:3},{l:'IVR 25–50% — aceptable',s:2},{l:'IVR > 50% — IV alta, solo con catalizador',s:1}]},
+      {id:'rr',label:'R/R — profit / loss ratio',w:3,opts:[{l:'≥ 2.0 — excelente para débito',s:3},{l:'1.0–2.0 — aceptable',s:2},{l:'0.5–1.0 — pobre',s:1},{l:'< 0.5 — rechazar',s:0}]},
+      {id:'prem',label:'Costo del débito (% del ancho)',w:2,opts:[{l:'< 33% — costo bajo',s:3},{l:'33–50% — moderado',s:2},{l:'50–67% — caro',s:1},{l:'> 67% — muy caro',s:0}]},
+      {id:'dist',label:'Distancia strike comprado vs precio',w:3,opts:[{l:'< 1% — casi ATM, alta prob.',s:3},{l:'1–2.5% OTM — balance',s:2},{l:'> 2.5% OTM — necesita gran movimiento',s:0}]},
+      {id:'dte',label:'DTE — necesita tiempo',w:2,opts:[{l:'21–45 días — suficiente',s:3},{l:'14–21 días — ajustado',s:2},{l:'< 14 días — insuficiente',s:0}]},
+      {id:'trend',label:'Tendencia confirmada alcista',w:2,opts:[{l:'Sobre MA50 y MA200 con momentum',s:3},{l:'Sobre MA50 solamente',s:2},{l:'Bajo las MAs — en contra',s:0}]},
+      {id:'cat',label:'Catalizador direccional',w:3,opts:[{l:'Earnings/macro/evento con fecha',s:3},{l:'Breakout técnico confirmado',s:2},{l:'Solo momentum — sin catalizador',s:0}]},
+    ],
+    pds:[
+      {id:'ivhv',label:'IV vs HV — el edge del débito',w:3,opts:[{l:'IV << HV — opciones baratas, edge gordo',s:3},{l:'IV < HV — favorable comprar',s:2},{l:'IV ≈ HV — sin edge',s:1},{l:'IV > HV — sobrepagas',s:0}]},
+      {id:'ivr',label:'IVR — nivel de volatilidad',w:2,opts:[{l:'IVR < 25% — prima barata',s:3},{l:'IVR 25–50% — aceptable',s:2},{l:'IVR > 50% — IV alta, solo con catalizador',s:1}]},
+      {id:'rr',label:'R/R — profit / loss ratio',w:3,opts:[{l:'≥ 2.0 — excelente para débito',s:3},{l:'1.0–2.0 — aceptable',s:2},{l:'0.5–1.0 — pobre',s:1},{l:'< 0.5 — rechazar',s:0}]},
+      {id:'prem',label:'Costo del débito (% del ancho)',w:2,opts:[{l:'< 33% — costo bajo',s:3},{l:'33–50% — moderado',s:2},{l:'50–67% — caro',s:1},{l:'> 67% — muy caro',s:0}]},
+      {id:'dist',label:'Distancia strike comprado vs precio',w:3,opts:[{l:'< 1% — casi ATM, alta prob.',s:3},{l:'1–2.5% OTM — balance',s:2},{l:'> 2.5% OTM — necesita gran caída',s:0}]},
+      {id:'dte',label:'DTE — necesita tiempo',w:2,opts:[{l:'21–45 días — suficiente',s:3},{l:'14–21 días — ajustado',s:2},{l:'< 14 días — insuficiente',s:0}]},
+      {id:'trend',label:'Tendencia confirmada bajista',w:2,opts:[{l:'Bajo MA50 y MA200 con momentum',s:3},{l:'Bajo MA50 solamente',s:2},{l:'Sobre las MAs — en contra',s:0}]},
+      {id:'cat',label:'Catalizador bajista',w:3,opts:[{l:'Earnings negativo/macro con fecha',s:3},{l:'Breakdown técnico confirmado',s:2},{l:'Solo momentum — sin catalizador',s:0}]},
+    ],
+    ic:[
+      {id:'ivr',label:'IVR — alta volatilidad implícita',w:3,opts:[{l:'IVR > 60% — rango amplio, prima generosa',s:3},{l:'IVR 40–60% — aceptable',s:2},{l:'IVR < 40% — prima insuficiente',s:0}]},
+      {id:'rr',label:'R/R — profit / loss ratio',w:3,opts:[{l:'≥ 0.5 — excelente',s:3},{l:'0.33–0.5 — aceptable',s:2},{l:'0.20–0.33 — pobre',s:1},{l:'< 0.20 — rechazar',s:0}]},
+      {id:'prem',label:'Calidad de la prima (% del ancho)',w:2,opts:[{l:'≥ 33% — excelente',s:3},{l:'25–33% — aceptable',s:2},{l:'15–25% — magra',s:1},{l:'< 15% — no vale',s:0}]},
+      {id:'range',label:'Comportamiento del precio',w:3,opts:[{l:'Lateral consolidado, múltiples toques',s:3},{l:'Formando rango, no consolidado',s:2},{l:'Tendencia activa — riesgo de ruptura',s:0}]},
+      {id:'dist',label:'Distancia de ambos strikes',w:3,opts:[{l:'Ambos > 3% del precio — foso amplio',s:3},{l:'Ambos > 1.5% — moderado',s:2},{l:'Alguno < 1.5% — riesgo de toque',s:0}]},
+      {id:'dte',label:'DTE — theta decay óptimo',w:2,opts:[{l:'30–45 días — zona ideal',s:3},{l:'15–30 días — aceptable',s:2},{l:'< 15 días — gamma elevado',s:1}]},
+      {id:'risk',label:'Eventos en el DTE',w:3,opts:[{l:'Sin earnings ni macro',s:3},{l:'Dato menor controlado',s:1},{l:'Earnings dentro del DTE',s:0}]},
+    ],
+  };
+
+  CONST = [
+    {num:'I',title:'Identidad y Filosofía',sub:'Quién soy en cada decisión.',lead:'Soy un gestor de capital, no un trader.',call:'Mi misión: construir libertad y tranquilidad mediante una estructura sólida — no maximizar riqueza ni ganar 3% diario.'},
+    {num:'II',title:'La Ventaja Matemática',sub:'De dónde sale el dinero.',lead:'La prima de riesgo de volatilidad.',body:'En promedio la IV es mayor que la realizada. Vendiendo prima soy la aseguradora: cobro el sobreprecio estructural con la probabilidad de mi lado.',call:'El edge se realiza con consistencia y disciplina, no con aciertos individuales.'},
+    {num:'III',title:'Estructura de Capital',sub:'Los compartimentos de la empresa.',body:'⛁ Operativo — motor de flujo (credit spreads, máx ~$550/op). ▣ Patrimonio — swings de 30–50%. ⛉ Bóveda — la base intacta que da estabilidad.'},
+    {num:'IV',title:'Setup A+ · Put Credit Spread',sub:'Mi entrada quirúrgica alcista.',call:'Un retroceso solo es oportunidad si el IVR lo justifica, el precio se estabilizó en soporte, y no me sobre-concentra. No “todo retroceso es oportunidad”.'},
+    {num:'V',title:'Setup A+ · Call Credit Spread',sub:'El reverso exacto.',call:'PCS busca un piso que aguante por abajo; CCS un techo que tope por arriba. Lo que flota, cae.'},
+    {num:'VI',title:'Gestión de Riesgo',sub:'Las leyes que protegen el capital.',body:'La pared de $550 por operación. Una posición por ticker y dirección. Nunca promediar a la baja. Delta agregada bajo control.'},
+    {num:'VII',title:'Reglas de Salida',sub:'El plan se escribe en frío.',call:'Tomar ganancia al 50% del crédito. Cerrar por invalidación. Salir por el plan, no por el miedo.'},
+    {num:'VIII',title:'Conducta y Psicología',sub:'El verdadero techo del negocio.',body:'El sistema ya es bueno — la psicología decide que funcione. Mis pérdidas grandes nunca fueron del sistema: fueron momentos donde la emoción tomó el volante.'},
+    {num:'IX',title:'Métricas de la Empresa',sub:'Un negocio se mide; un hobby no.',body:'Expectancy, Profit factor, Win rate por estrategia y ticker, limpio vs forzado, drawdown máximo. Junta directiva mensual.'},
+    {num:'X',title:'Caso de Estudio · META',sub:'La lección fechada.',call:'El ticker no falló; bajé la guardia. El arreglo no es abandonar META, es volver a tratarla con el sistema, siempre.'},
+    {num:'XI',title:'La Selección de Estructura',sub:'La dirección la marca el gráfico; la estructura, la tesis.',body:'Créditos (PCS/CCS) = flujo, probabilidad + IVR alto. Débitos (BCS/PDS) = tesis, catalizador + IVR bajo. Swings = cazar el movimiento.'},
+  ];
+  COMPROMISO = ['Ejecuto el sistema, no el estado de ánimo.','Mido lo que importa y reviso mi empresa.','No promedio a la baja. No persigo extensiones.','Ninguna barrera es irrompible.','Mi disciplina se refuerza donde más confío.','El plan escrito en frío manda sobre la emoción.','El capital ya está protegido por la estructura.','Lo único que entreno es la cabeza.'];
+
+  calcMetrics(list){
+    if(!list.length) return {n:0,pnl:0,wr:0,avgWin:0,avgLoss:0,pf:0,maxDD:0,wins:0,losses:0,edgeN:0,nHedges:0,hedgePnl:0,expectancy:0,rr:0,best:0,worst:0,tickersOk:0,tickersTot:0,stratsOk:0,stratsTot:0,bestBias:null};
+    const edge=list.filter(t=>!t.isHedge&&!t.isPatrimony), hedge=list.filter(t=>t.isHedge);
+    const wins=edge.filter(t=>t.pnl>0), losses=edge.filter(t=>t.pnl<0);
+    const pnl=list.reduce((a,t)=>a+t.pnl,0), hedgePnl=hedge.reduce((a,t)=>a+t.pnl,0);
+    const avgWin=wins.length?wins.reduce((a,t)=>a+t.pnl,0)/wins.length:0;
+    const avgLoss=losses.length?losses.reduce((a,t)=>a+Math.abs(t.pnl),0)/losses.length:0;
+    const grossW=wins.reduce((a,t)=>a+t.pnl,0), grossL=losses.reduce((a,t)=>a+Math.abs(t.pnl),0);
+    const pf=grossL>0?grossW/grossL:(grossW>0?Infinity:0);
+    let peak=0,eq=0,maxDD=0;
+    [...list].sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>{eq+=t.pnl;if(eq>peak)peak=eq;const dd=peak-eq;if(dd>maxDD)maxDD=dd;});
+    const wr=edge.length?wins.length/edge.length:0;
+    const expectancy=edge.length?edge.reduce((a,t)=>a+t.pnl,0)/edge.length:0;
+    const rr=avgLoss>0?avgWin/avgLoss:0;
+    const best=edge.length?Math.max(...edge.map(t=>t.pnl)):0, worst=edge.length?Math.min(...edge.map(t=>t.pnl)):0;
+    // tickers / estrategias rentables
+    const byKey=(key)=>{const g={};edge.forEach(t=>{const k=t[key]||'—';g[k]=(g[k]||0)+t.pnl;});const ks=Object.keys(g);return [ks.filter(k=>g[k]>0).length, ks.length, g];};
+    const [tickersOk,tickersTot]=byKey('ticker');
+    const [stratsOk,stratsTot,byStratPnl]=byKey('strat');
+    let bestBias=null,bp=-Infinity; Object.keys(byStratPnl).forEach(k=>{if(byStratPnl[k]>bp){bp=byStratPnl[k];bestBias=k;}});
+    return {n:list.length,edgeN:edge.length,nHedges:hedge.length,wins:wins.length,losses:losses.length,pnl,hedgePnl,wr,avgWin,avgLoss,pf,maxDD,expectancy,rr,best,worst,tickersOk,tickersTot,stratsOk,stratsTot,bestBias,byStratPnl};
+  }
+  MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  monthLabel(ym){ const [y,m]=ym.split('-').map(Number); return this.MONTHS[m-1]+' de '+y; }
+
+  curve(list){
+    const sorted=[...list].sort((a,b)=>a.date.localeCompare(b.date));
+    let c=0; const vals=[0]; const meta=[{cum:0,date:null,t:null}];
+    sorted.forEach(t=>{c+=t.pnl;vals.push(c);meta.push({cum:c,date:t.date,t:t});});
+    if(vals.length<2){vals.push(0);meta.push({cum:0,date:null,t:null});}
+    const W=700,H=214,pad=8,min=Math.min(...vals),max=Math.max(...vals),range=(max-min)||1,n=vals.length;
+    const xs=i=>(i/(n-1))*W, ys=v=>H-pad-((v-min)/range)*(H-pad*2);
+    let line=''; vals.forEach((v,i)=>{const x=xs(i).toFixed(1),y=ys(v).toFixed(1);line+=(i===0?'M '+x+' '+y:' L '+x+' '+y);});
+    this._curveN=n;
+    const pts=vals.map((v,i)=>({x:xs(i),y:ys(v),cum:meta[i].cum,date:meta[i].date,t:meta[i].t}));
+    return {linePath:line, areaPath:line+' L '+W+' '+H+' L 0 '+H+' Z', lastX:xs(n-1).toFixed(1), lastY:ys(vals[n-1]).toFixed(1), curvePts:pts, curveW:W, curveH:H};
+  }
+  dteDays(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+
+  analyze(d){
+    const credit=parseFloat(d.initialCredit)||0, current=(d.currentPrice==null||d.currentPrice==='')?null:parseFloat(d.currentPrice);
+    const contracts=parseInt(d.contracts)||1, isCredit=d.isCredit!==false;
+    let profitPct=null, unreal=null;
+    if(current!==null){ profitPct=credit>0?((isCredit?(credit-current):(current-credit))/credit)*100:0; unreal=(isCredit?(credit-current):(current-credit))*100*contracts; }
+    const today=this.today();
+    const totalDays=d.entryDate&&d.expiry?this.dteDays(d.entryDate,d.expiry):null;
+    const dteRem=d.expiry?this.dteDays(today,d.expiry):null;
+    const elapsed=(totalDays!=null&&dteRem!=null)?totalDays-dteRem:null;
+    const timePct=(totalDays&&elapsed!=null)?Math.max(0,Math.min(100,(elapsed/totalDays)*100)):null;
+    const tp=dteRem!=null?(dteRem<5?30:dteRem<15?40:50):50;
+    const ivCh=(d.entryIv&&d.currentIv)?((parseFloat(d.currentIv)-parseFloat(d.entryIv))/parseFloat(d.entryIv))*100:null;
+    let distToShort=null;
+    if(d.currentSpot&&d.strikes){const sh=parseFloat(String(d.strikes).split('/')[0]); if(!isNaN(sh)) distToShort=((sh-parseFloat(d.currentSpot))/parseFloat(d.currentSpot))*100;}
+    const sig=[];
+    if(profitPct!=null){ if(profitPct>=tp) sig.push({type:'pos',text:'Profit '+profitPct.toFixed(0)+'% supera TP de '+tp+'%'}); else if(profitPct>=tp*0.7) sig.push({type:'neu',text:'Profit '+profitPct.toFixed(0)+'% acercándose al TP de '+tp+'%'}); else if(profitPct<0) sig.push({type:'neg',text:'En pérdida de '+profitPct.toFixed(0)+'%'}); }
+    if(timePct!=null&&profitPct!=null){ if(timePct>60&&profitPct<25&&profitPct>0) sig.push({type:'neg',text:'Tiempo al '+timePct.toFixed(0)+'% sin progreso significativo'}); else if(timePct<30&&profitPct>tp*0.7) sig.push({type:'pos',text:'Ganancia rápida con '+timePct.toFixed(0)+'% del tiempo'}); }
+    if(ivCh!=null&&isCredit){ if(ivCh<=-30) sig.push({type:'pos',text:'IV crush capturado: '+ivCh.toFixed(0)+'%'}); else if(ivCh>=30) sig.push({type:'neg',text:'IV expandió '+ivCh.toFixed(0)+'% — prima se infló'}); }
+    if(distToShort!=null&&isCredit&&Math.abs(distToShort)<1.5) sig.push({type:'neg',red:true,text:'Spot a '+Math.abs(distToShort).toFixed(1)+'% del short — foso comprometido'});
+    if(dteRem!=null&&dteRem<=3&&profitPct!=null&&profitPct<tp) sig.push({type:'neg',text:'DTE crítico ('+dteRem+'d) con profit parcial'});
+    let dir; const red=sig.some(s=>s.red);
+    if(profitPct==null) dir={key:'unknown',color:'#8a909c',bg:'rgba(138,144,156,0.08)',border:'#1c2028',title:'Sin datos',sub:'Actualiza el precio del contrato'};
+    else if(red) dir={key:'alert',color:'#ef5a78',bg:'rgba(239,90,120,0.08)',border:'rgba(239,90,120,0.35)',title:'ALERTA · Evaluar estructura',sub:'Bandera roja — revisa tu thesis y considera cerrar'};
+    else if(profitPct>=tp) dir={key:'extract',color:'#34d399',bg:'rgba(52,211,153,0.08)',border:'rgba(52,211,153,0.35)',title:'DIRECTIVA A · Extraer capital',sub:'Cumple TP — libera capital para el próximo'};
+    else if(profitPct<0) dir={key:'evaluate',color:'#ef5a78',bg:'rgba(239,90,120,0.08)',border:'rgba(239,90,120,0.35)',title:'ALERTA · Evaluar estructura',sub:'Pérdida activa — revisa thesis, defensa o cierre'};
+    else if(timePct!=null&&timePct>50) dir={key:'accel',color:'#fb923c',bg:'rgba(251,146,60,0.08)',border:'rgba(251,146,60,0.35)',title:'DIRECTIVA C · Acelerar extracción',sub:'Tiempo > 50% con profit parcial — evalúa salir'};
+    else dir={key:'hold',color:'#f5a623',bg:'rgba(245,158,11,0.06)',border:'rgba(245,158,11,0.3)',title:'DIRECTIVA B · Mantener',sub:'Theta trabaja a tu favor — mantén la posición'};
+    let capRisk=null;
+    if(d.strikes){const p=String(d.strikes).split('/').map(parseFloat); if(p.length>=2&&!isNaN(p[0])&&!isNaN(p[1])){const w=Math.abs(p[0]-p[1]); capRisk=(isCredit?(w-credit):credit)*100*contracts;}}
+    const stale=d.lastUpdate?((Date.now()-new Date(d.lastUpdate).getTime())/3600000)>24:(current===null);
+    return {profitPct,unreal,dteRem,totalDays,timePct,tp,signals:sig,directive:dir,capRisk,stale};
+  }
+
+  fmt(v,sign){ const a=Math.abs(Math.round(v||0)); const s='$'+a.toLocaleString('en-US'); return (v<0?'-':(sign?'+':''))+s; }
+
+  hoverOverlay(list){
+    const c=this.curve(list||[]); const i=this.state.hoverIdx;
+    if(i==null||!c.curvePts||i<=0||i>=c.curvePts.length) return {chartHover:false,hx:0,hy:0,htLeft:0,htText:'',htDate:'',htColor:'#34d399',hLineX:0};
+    const p=c.curvePts[i]; const cum=p.cum||0;
+    const lbl=p.t?(p.t.ticker+' · '+(this.STRAT[p.t.strat]?this.STRAT[p.t.strat].short:'')):'';
+    const dlt=p.t?((p.t.pnl>=0?'+':'-')+this.fmt(p.t.pnl).replace('-','')):'';
+    const left=Math.max(0,Math.min(560,(p.x/c.curveW)*700-70));
+    return {chartHover:true, hx:p.x.toFixed(1), hy:p.y.toFixed(1), hLineX:p.x.toFixed(1),
+      htLeft:left.toFixed(0), htText:this.fmt(cum,true), htColor:cum>=0?'#34d399':'#ef5a78',
+      htDate:(p.date||'')+(lbl?'  ·  '+lbl+' '+dlt:'')};
+  }
+
+  // ── scorecard handlers ──
+  pickStrat(k){ return ()=>this.setState({scoreSt:k}); }
+  pick(cid,oi){ return ()=>this.setState(st=>({answers:{...st.answers,[st.scoreSt+'_'+cid]:oi}})); }
+  resetScore=()=>this.setState(st=>{const a={...st.answers};(this.SCORECARD[st.scoreSt]||[]).forEach(c=>delete a[st.scoreSt+'_'+c.id]);return {answers:a};});
+  onF(k){ return e=>this.setState(st=>({f:{...st.f,[k]:e.target.value}})); }
+
+  saveSetup=()=>{
+    const f=this.state.f, sk=this.state.scoreSt, cfg=this.STRAT[sk];
+    if(!f.ticker){ this.showToast('Falta el ticker'); return; }
+    const strikes=(f.strikeShort&&f.strikeLong)?f.strikeShort+'/'+f.strikeLong:'';
+    const crit=this.SCORECARD[sk]||[], ans=this.state.answers;
+    const max=crit.reduce((a,c)=>a+c.w*3,0);
+    const earned=crit.reduce((a,c)=>{const s=ans[sk+'_'+c.id];return s===undefined?a:a+c.opts[s].s*c.w;},0);
+    const dep={id:this.uid(),ticker:f.ticker.toUpperCase(),strat:sk,strikes,contracts:f.contracts||'1',
+      initialCredit:f.premium||'0',currentPrice:null,isCredit:cfg.credit,
+      entryDate:this.today(),expiry:f.expiry||'',entrySpot:f.spot||'',currentSpot:null,
+      entryIv:f.ivr||'',currentIv:null,entryDelta:'',currentDelta:null,
+      score:max?Math.round((earned/max)*100):0,notes:'',lastUpdate:new Date().toISOString(),createdAt:this.today()};
+    this.patchData({deployments:[dep,...this.state.data.deployments]});
+    this.setState({f:{ticker:'',spot:'',strikeShort:'',strikeLong:'',ivr:'',expiry:'',premium:'',contracts:'1'},answers:{},screen:'open'});
+    this.showToast(dep.ticker+' guardado como despliegue');
+  };
+
+  // ── modal field handlers ──
+  onBuf(buf,k){ return e=>{const val=e.target.type==='checkbox'?e.target.checked:e.target.value; this.setState(st=>({[buf]:{...st[buf],[k]:val}}));}; }
+
+  openAddTrade=()=>this.setState({modal:'trade',tf:{date:this.today(),ticker:'',strat:'pcs',strikes:'',pnl:'',contracts:'1',isHedge:false}});
+  doAddTrade=()=>{
+    const t=this.state.tf; if(!t.ticker||t.pnl===''){ this.showToast('Falta ticker o P&L'); return; }
+    const trade={id:this.uid(),date:t.date||this.today(),expiry:'',ticker:t.ticker.toUpperCase(),strat:t.strat||'pcs',strikes:t.strikes||'',premium:'',contracts:t.contracts||'1',ivr:'',score:null,pnl:parseFloat(t.pnl)||0,pct:0,isHedge:!!t.isHedge,notes:''};
+    this.patchData({trades:[trade,...this.state.data.trades]});
+    this.setState({modal:null}); this.showToast('Trade registrado');
+  };
+
+  openUpdate(dep){ return ()=>this.setState({modal:'update',depId:dep.id,uf:{currentPrice:dep.currentPrice||'',currentSpot:dep.currentSpot||'',currentIv:dep.currentIv||'',currentDelta:dep.currentDelta||''}}); }
+  doUpdateDep=()=>{
+    const u=this.state.uf, id=this.state.depId;
+    const deps=this.state.data.deployments.map(d=>d.id===id?{...d,currentPrice:u.currentPrice,currentSpot:u.currentSpot,currentIv:u.currentIv,currentDelta:u.currentDelta,lastUpdate:new Date().toISOString()}:d);
+    this.patchData({deployments:deps}); this.setState({modal:null}); this.showToast('Despliegue actualizado');
+  };
+
+  openClose(dep){ return ()=>{const a=this.analyze(dep); this.setState({modal:'close',depId:dep.id,cf:{finalPnl:a.unreal!=null?String(Math.round(a.unreal)):'',closeDate:this.today()}});}; }
+  doCloseDep=()=>{
+    const c=this.state.cf, id=this.state.depId, dep=this.state.data.deployments.find(d=>d.id===id);
+    if(!dep) return;
+    const trade={id:this.uid(),date:c.closeDate||this.today(),expiry:dep.expiry||'',ticker:dep.ticker,strat:dep.strat,strikes:dep.strikes||'',premium:dep.initialCredit||'',contracts:dep.contracts||'1',ivr:dep.entryIv||'',score:dep.score||null,pnl:parseFloat(c.finalPnl)||0,pct:0,isHedge:false,notes:''};
+    this.patchData({trades:[trade,...this.state.data.trades],deployments:this.state.data.deployments.filter(d=>d.id!==id)});
+    this.setState({modal:null}); this.showToast(dep.ticker+' cerrado y registrado');
+  };
+
+  // ── capital ──
+  openCapitalSetup=()=>{const c=this.state.data.capital||{}; this.setState({modal:'capital',capf:{operativo:c.operativo||'',patrimonio:c.patrimonio||'',boveda:c.boveda||''}});};
+  doCapitalSetup=()=>{
+    const c=this.state.capf;
+    const cap={operativo:parseFloat(c.operativo)||0,patrimonio:parseFloat(c.patrimonio)||0,boveda:parseFloat(c.boveda)||0,stocks:(this.state.data.capital&&this.state.data.capital.stocks)||[],movements:(this.state.data.capital&&this.state.data.capital.movements)||[]};
+    this.patchData({capital:cap}); this.setState({modal:null}); this.showToast('Capital configurado');
+  };
+  openAddStock=()=>this.setState({modal:'stock',sf:{ticker:'',shares:'',entry:'',current:''}});
+  doAddStock=()=>{
+    const s=this.state.sf; if(!s.ticker||!s.shares||!s.entry){ this.showToast('Faltan datos'); return; }
+    const cap=this.state.data.capital||{operativo:0,patrimonio:0,boveda:0,stocks:[],movements:[]};
+    const stock={id:this.uid(),ticker:s.ticker.toUpperCase(),shares:parseFloat(s.shares),entryPrice:parseFloat(s.entry),currentPrice:parseFloat(s.current)||parseFloat(s.entry)};
+    this.patchData({capital:{...cap,stocks:[stock,...(cap.stocks||[])]}}); this.setState({modal:null}); this.showToast('Posición agregada');
+  };
+  openMoveCapital=()=>this.setState({modal:'move',mvf:{from:'operativo',to:'boveda',amount:''}});
+  doMoveCapital=()=>{
+    const m=this.state.mvf, amt=parseFloat(m.amount)||0; if(amt<=0||m.from===m.to){ this.showToast('Movimiento inválido'); return; }
+    const cap={...(this.state.data.capital||{operativo:0,patrimonio:0,boveda:0,stocks:[],movements:[]})};
+    if(m.from!=='externo') cap[m.from]=(cap[m.from]||0)-amt;
+    if(m.to!=='externo') cap[m.to]=(cap[m.to]||0)+amt;
+    cap.movements=[{id:this.uid(),date:this.today(),from:m.from,to:m.to,amount:amt},...(cap.movements||[])];
+    this.patchData({capital:cap}); this.setState({modal:null}); this.showToast('Capital movido');
+  };
+
+  // ── backup / restore ──
+  openRestore=()=>this.setState({modal:'restore',restoreText:'',restoreErr:''});
+  onRestoreText=(e)=>this.setState({restoreText:e.target.value});
+  doRestore=()=>{
+    try{
+      const parsed=JSON.parse(this.state.restoreText);
+      const d=parsed.data||parsed;
+      const data={trades:d.trades||[],drafts:d.drafts||[],deployments:d.deployments||[],capital:d.capital!==undefined?d.capital:null,dark:d.dark!==false};
+      this.persist(data);
+      this.setState({modal:null,restoreText:'',restoreErr:'',screen:'overview'});
+      this.showToast('Respaldo restaurado: '+data.trades.length+' trades · '+data.deployments.length+' despliegues');
+    }catch(err){ this.setState({restoreErr:'JSON inválido — revisa que pegaste el contenido completo del respaldo.'}); }
+  };
+  doBackup=()=>{
+    const backup={version:'tl_v1',exportedAt:new Date().toISOString(),data:this.state.data};
+    try{
+      const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='tradelog-'+this.today()+'.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      this.showToast('Respaldo descargado');
+    }catch(e){ this.showToast('No se pudo exportar'); }
+  };
+
+  buildDays(list, ym){
+    const [yy,mm]=ym.split('-').map(Number);
+    const daysIn=new Date(yy,mm,0).getDate();
+    const firstDow=new Date(yy,mm-1,1).getDay();
+    const data={}, cnt={};
+    list.filter(t=>t.date&&t.date.startsWith(ym)).forEach(t=>{const d=parseInt(t.date.slice(8,10));data[d]=(data[d]||0)+t.pnl;cnt[d]=(cnt[d]||0)+1;});
+    const cells=[];
+    for(let i=0;i<firstDow;i++) cells.push({num:'',blank:true});
+    for(let d=1;d<=daysIn;d++) cells.push({num:d,blank:false});
+    while(cells.length%7!==0) cells.push({num:'',blank:true});
+    const sel=this.state.jDay;
+    return cells.map(c=>{
+      if(c.blank) return {num:'',has:false,sel:false,bg:'transparent',border:'transparent',numColor:'#2c2f37',pnl:'',pnlColor:'#666',count:'',onClick:null,cursor:'default'};
+      const raw=data[c.num],has=raw!==undefined,v=has?Math.round(raw):0,win=has&&v>=0,isSel=sel===c.num;
+      return {num:c.num,has,sel:isSel,
+        bg:isSel?'#1a1f17':(has?(win?'#0c1812':'#180c10'):'#0c0e12'),
+        border:isSel?'#f5a623':(has?(win?'#163024':'#301620'):'#13161c'),
+        numColor:has?'#c9cdd6':'#454c58',pnl:has?(win?'+$'+Math.abs(v):'-$'+Math.abs(v)):'',pnlColor:win?'#34d399':'#ef5a78',
+        count:has?(cnt[c.num]+(cnt[c.num]>1?' ops':' op')):'',onClick:has?this.selectDay(c.num):null,cursor:has?'pointer':'default'};
+    });
+  }
+
+  scoreVals(){
+    const sk=this.state.scoreSt, cfg=this.STRAT[sk], crit=this.SCORECARD[sk]||[], ans=this.state.answers, f=this.state.f;
+    const max=crit.reduce((a,c)=>a+c.w*3,0);
+    const earned=crit.reduce((a,c)=>{const s=ans[sk+'_'+c.id];return s===undefined?a:a+c.opts[s].s*c.w;},0);
+    const answered=crit.filter(c=>ans[sk+'_'+c.id]!==undefined).length;
+    const pct=max?Math.round((earned/max)*100):0;
+    const sColor=s=>s>=3?'#34d399':s>=2?'#f5a623':s>=1?'#c9882e':'#ef5a78';
+    const criteria=crit.map(c=>{const sel=ans[sk+'_'+c.id];return {label:c.label,w:c.w,opts:c.opts.map((o,i)=>{const is=sel===i;return {l:o.l,sLabel:'+'+o.s,scoreColor:is?sColor(o.s):'#565d6a',sel:is,pick:this.pick(c.id,i),bg:is?'rgba(245,158,11,0.07)':'transparent',border:is?'rgba(245,158,11,0.4)':'#1c2028',dot:is?'#f5a623':'#3a4150',text:is?'#eef1f5':'#9aa0ac'};})};});
+
+    // autocalc
+    const credit=parseFloat(f.premium)||0, ss=parseFloat(f.strikeShort)||0, ls=parseFloat(f.strikeLong)||0, spot=parseFloat(f.spot)||0, contr=parseInt(f.contracts)||1, isCredit=cfg.credit;
+    const width=(ss>0&&ls>0)?Math.abs(ss-ls):0;
+    let premQuality='—',premColor='#565d6a',rrStr='—',rrColor='#565d6a',maxProfit='—',maxLoss='—',beStr='—',fosoStr='—';
+    if(credit>0&&width>0){
+      const pq=(credit/width)*100; premQuality=pq.toFixed(0)+'%';
+      const mp=(isCredit?credit:(width-credit))*100*contr, ml=(isCredit?(width-credit):credit)*100*contr;
+      maxProfit='+'+this.fmt(mp); maxLoss='-'+this.fmt(ml);
+      const rr=ml>0?mp/ml:0; rrStr=rr.toFixed(2);
+      if(isCredit){premColor=pq>=33?'#34d399':pq>=15?'#f5a623':'#ef5a78';rrColor=rr>=0.5?'#34d399':rr>=0.33?'#f5a623':'#ef5a78';}
+      else{premColor=pq<=33?'#34d399':pq<=50?'#f5a623':'#ef5a78';rrColor=rr>=2?'#34d399':rr>=1?'#f5a623':'#ef5a78';}
+      if(ss>0){const be=(sk==='pcs'||sk==='pds')?ss-credit:ss+credit; beStr='$'+be.toFixed(2); if(spot>0) fosoStr=(Math.abs((be-spot)/spot)*100).toFixed(1)+'%';}
+    }
+    let dteStr='—',dteColor='#565d6a';
+    if(f.expiry){const dte=this.dteDays(this.today(),f.expiry); dteStr=dte+'d'; dteColor=dte<=5?'#ef5a78':dte<=14?'#34d399':dte<=30?'#f5a623':'#5ec2e8';}
+    let distStr='—',distColor='#565d6a',distDir='—';
+    if(spot>0&&ss>0){const dist=Math.abs((ss-spot)/spot)*100; distStr=dist.toFixed(1)+'%'; const isDebit=!isCredit; distColor=isDebit?(dist<1?'#34d399':dist<=2.5?'#f5a623':'#ef5a78'):(dist>3?'#34d399':dist>=2?'#f5a623':'#ef5a78'); distDir=(sk==='pcs'||sk==='pds')?'↓':(sk==='ccs'||sk==='bcs')?'↑':'±';}
+
+    const verdict=pct>=85?{label:'A+ · Ejecutar el plan',color:'#34d399',bg:'rgba(52,211,153,0.1)',border:'rgba(52,211,153,0.35)'}
+      :pct>=65?{label:'Viable · revisar lo débil',color:'#f5a623',bg:'rgba(245,158,11,0.1)',border:'rgba(245,158,11,0.35)'}
+      :answered===0?{label:'Sin evaluar',color:'#8a909c',bg:'rgba(138,144,156,0.08)',border:'#1c2028'}
+      :{label:'Rechazar · no fuerces',color:'#ef5a78',bg:'rgba(239,90,120,0.1)',border:'rgba(239,90,120,0.35)'};
+    const stratTabs=Object.keys(this.STRAT).map(k=>{const v=this.STRAT[k];return {short:v.short,bias:v.bias,go:this.pickStrat(k),bg:sk===k?'rgba(245,158,11,0.1)':'transparent',border:sk===k?'rgba(245,158,11,0.45)':'#1c2028',color:sk===k?'#f5a623':'#8a909c'};});
+
+    return {stratTabs,stratLabel:cfg.label,stratHint:cfg.hint,criteria,answered,totalCrit:crit.length,
+      scorePct:pct,verdictLabel:verdict.label,verdictColor:verdict.color,verdictBg:verdict.bg,verdictBorder:verdict.border,
+      f, onF:{ticker:this.onF('ticker'),spot:this.onF('spot'),strikeShort:this.onF('strikeShort'),strikeLong:this.onF('strikeLong'),ivr:this.onF('ivr'),expiry:this.onF('expiry'),premium:this.onF('premium'),contracts:this.onF('contracts')},
+      premLabel:isCredit?'Crédito $':'Débito $', premName:isCredit?'Créd/ancho':'Costo/ancho',
+      premQuality,premColor,rrStr,rrColor,maxProfit,maxLoss,beStr,fosoStr,dteStr,dteColor,distStr,distColor,distDir,
+      saveSetup:this.saveSetup,resetScore:this.resetScore};
+  }
+
+  renderVals(){
+    const s=this.state.screen, D=this.state.data;
+    const m=this.calcMetrics(D.trades);
+    const pf=m.pf===Infinity?'∞':m.pf.toFixed(2);
+
+    const deployed=D.deployments.map(d=>{const a=this.analyze(d); const sd=this.STRAT[d.strat]||{short:(d.strat||'').toUpperCase(),tag:'#8a909c'}; return {raw:d,a,short:sd.short,tag:sd.tag};});
+    const riskTotal=deployed.reduce((acc,x)=>acc+(x.a.capRisk||0),0);
+    const unrealTotal=deployed.reduce((acc,x)=>acc+(x.a.unreal||0),0);
+
+    const titles={
+      overview:['Resumen', D.trades.length?D.trades.length+' operaciones registradas':'tu copiloto de disciplina'],
+      journal:['Journal', D.trades.length+' operaciones'],
+      open:['Despliegues activos', deployed.length?deployed.length+' abiertos · en riesgo '+this.fmt(riskTotal)+' · '+this.fmt(unrealTotal,true)+' no realizado':'sin posiciones abiertas'],
+      score:['Scorecard','Evalúa tu setup antes de entrar'],
+      capital:['Estructura de Capital','Operativo · Patrimonio · Bóveda'],
+      constitution:['Constitución','El manual de operaciones de la empresa'],
+    };
+    const nav=[
+      {key:'overview',label:'Resumen',dot:'#f5a623',badge:null},
+      {key:'journal',label:'Journal',dot:'#2a3038',badge:D.trades.length?String(D.trades.length):null},
+      {key:'open',label:'Despliegues',dot:'#ef5a78',badge:deployed.length?String(deployed.length):null},
+      {key:'score',label:'Scorecard',dot:'#2a3038',badge:null},
+      {key:'capital',label:'Capital',dot:'#5ec2e8',badge:null},
+      {key:'constitution',label:'Constitución',dot:'#2a3038',badge:null},
+    ].map(n=>({...n,active:s===n.key,color:s===n.key?'#eef1f5':'#8a909c',go:this.go(n.key)}));
+
+    const expSign=m.expectancy>=0;
+    const kpis=[
+      {label:'Expectancy / trade',val:(expSign?'+':'-')+this.fmt(m.expectancy).replace('-',''),sub:'ganancia esperada por operación',color:expSign?'#34d399':'#ef5a78'},
+      {label:'Profit factor',val:pf,sub:m.pf>=1?'edge positivo':'edge en construcción',color:m.pf>=1?'#34d399':'#ef5a78'},
+      {label:'Win rate',val:(m.wr*100).toFixed(1)+'%',sub:m.wins+'W · '+m.losses+'L (sin coberturas)',color:'#34d399'},
+      {label:'R / R',val:m.rr.toFixed(2)+'×',sub:'ganancia media / pérdida media',color:m.rr>=1.5?'#34d399':m.rr>=1?'#f5a623':'#ef5a78'},
+      {label:'Avg win',val:this.fmt(m.avgWin,true),sub:'por trade ganador',color:'#34d399'},
+      {label:'Avg loss',val:'-'+this.fmt(m.avgLoss),sub:'por trade perdedor',color:'#ef5a78'},
+      {label:'Tickers rentables',val:m.tickersOk+'/'+m.tickersTot,sub:'nombres en verde',color:'#5ec2e8'},
+      {label:'Estrategias rentables',val:m.stratsOk+'/'+m.stratsTot,sub:'motores en verde',color:'#5ec2e8'},
+      {label:'Mejor trade',val:this.fmt(m.best,true),sub:'tope ganador',color:'#34d399'},
+      {label:'Peor trade',val:this.fmt(m.worst,true),sub:'tope perdedor',color:'#ef5a78'},
+      {label:'Drawdown máx',val:'-'+this.fmt(m.maxDD),sub:'peor racha de capital',color:'#ef5a78'},
+      {label:'Coberturas',val:(m.hedgePnl>=0?'+':'-')+this.fmt(m.hedgePnl).replace('-','')+' · '+m.nHedges,sub:'costo/aporte defensivo',color:m.hedgePnl>=0?'#34d399':'#fb923c'},
+    ];
+    // P&L por estrategia
+    const byStrat=Object.keys(m.byStratPnl||{}).map(k=>({short:(this.STRAT[k]?this.STRAT[k].short:k.toUpperCase()),tag:(this.STRAT[k]?this.STRAT[k].tag:'#8a909c'),pnl:m.byStratPnl[k]}))
+      .sort((a,b)=>b.pnl-a.pnl).map(x=>({short:x.short,tag:x.tag,pnl:(x.pnl>=0?'+':'')+this.fmt(x.pnl).replace('-',''),pnlColor:x.pnl>=0?'#34d399':'#ef5a78'}));
+
+    const positions=deployed.map(x=>{const a=x.a,d=x.raw;return {
+      ticker:d.ticker,strat:x.short,tagColor:x.tag,stale:a.stale,
+      meta:(d.strikes||'—')+' · '+(d.contracts||1)+' contrato · créd $'+(Number(d.initialCredit)||0).toFixed(2),
+      profit:(a.profitPct!=null?(a.profitPct>=0?'+':'')+a.profitPct.toFixed(0)+'%':'—'),
+      unreal:this.fmt(a.unreal||0,true), tp:a.tp+'%', pnlColor:(a.profitPct>=0?'#34d399':'#ef5a78'),
+      timeLabel:(a.totalDays!=null?(a.totalDays-(a.dteRem||0))+'d / '+a.totalDays+'d':'—'),
+      timePct:(a.timePct||0), timePctLabel:(a.timePct!=null?a.timePct.toFixed(0)+'%':'—'), timeColor:(a.timePct>60?'#fb923c':'#34d399'),
+      dirTitle:a.directive.title,dirSub:a.directive.sub,dirColor:a.directive.color,dirBg:a.directive.bg,dirBorder:a.directive.border,
+      signals:a.signals.map(sg=>({text:sg.text,color:sg.type==='pos'?'#34d399':sg.type==='neg'?'#ef5a78':'#f5a623'})), hasSignals:a.signals.length>0,
+      onUpdate:this.openUpdate(d), onClose:this.openClose(d),
+      closeBg:(a.directive.key==='extract'||a.directive.key==='alert')?'linear-gradient(150deg,#fbbf3b,#f59016)':'#161b23',
+      closeColor:(a.directive.key==='extract'||a.directive.key==='alert')?'#1a1205':'#c9cdd6'};
+    });
+
+    // ── journal: month + filters ──
+    const ym=this.activeMonth();
+    const allTickers=[...new Set(D.trades.map(t=>t.ticker).filter(Boolean))].sort();
+    const allStrats=[...new Set(D.trades.map(t=>t.strat).filter(Boolean))];
+    const jt=this.state.jTicker, js=this.state.jStrat;
+    const filtered=D.trades.filter(t=>(jt==='all'||t.ticker===jt)&&(js==='all'||t.strat===js));
+    const monthTrades=filtered.filter(t=>t.date&&t.date.startsWith(ym));
+    const monthPnl=monthTrades.reduce((a,t)=>a+t.pnl,0);
+    // list rows (filtered, optionally by selected day)
+    const jDay=this.state.jDay;
+    const dayPad=jDay!=null?ym+'-'+String(jDay).padStart(2,'0'):null;
+    const listSource=(dayPad?filtered.filter(t=>t.date===dayPad):filtered);
+    const sorted=[...listSource].sort((a,b)=>b.date.localeCompare(a.date));
+    const maxAbs=Math.max(1,...sorted.map(t=>Math.abs(t.pnl)));
+    const tradeRows=sorted.slice(0,120).map(t=>{
+      const pos=t.pnl>=0, w=Math.min(50,(Math.abs(t.pnl)/maxAbs)*50);
+      return {ticker:t.ticker,date:t.date,strat:(this.STRAT[t.strat]?this.STRAT[t.strat].short:(t.strat||'').toUpperCase()),
+        tagColor:(this.STRAT[t.strat]?this.STRAT[t.strat].tag:'#8a909c'),strikes:t.strikes||'—',isHedge:!!t.isHedge,
+        pnl:(pos?'+':'-')+this.fmt(t.pnl).replace('-',''),pnlColor:pos?'#34d399':'#ef5a78',
+        barPct:w, barOffset:pos?50:(50-w)};
+    });
+    // day-detail panel
+    const dayTrades=jDay!=null?[...filtered.filter(t=>t.date===dayPad)].sort((a,b)=>(b.pnl)-(a.pnl)):[];
+    const dayPnl=dayTrades.reduce((a,t)=>a+t.pnl,0);
+    const dayDetail=dayTrades.map(t=>{const pos=t.pnl>=0;return {ticker:t.ticker,strat:(this.STRAT[t.strat]?this.STRAT[t.strat].short:(t.strat||'').toUpperCase()),tagColor:(this.STRAT[t.strat]?this.STRAT[t.strat].tag:'#8a909c'),strikes:t.strikes||'—',contracts:t.contracts||'1',isHedge:!!t.isHedge,pnl:(pos?'+':'-')+this.fmt(t.pnl).replace('-',''),pnlColor:pos?'#34d399':'#ef5a78',notes:t.notes||''};});
+    const monthNav=this.monthsWithData();
+    const idx=monthNav.indexOf(ym);
+
+    // ── capital (modelo completo) ──
+    const cap=D.capital;
+    const opN=cap?(cap.operativo||0):0, patCashN=cap?(cap.patrimonioCash||0):0;
+    const stocksVal=(cap&&cap.stocks||[]).reduce((a,st)=>a+((st.currentPrice||st.entryPrice)*st.shares),0);
+    const stocksCost=(cap&&cap.stocks||[]).reduce((a,st)=>a+(st.entryPrice*st.shares),0);
+    const patN=(cap&&cap.patrimonio!=null)?cap.patrimonio:(patCashN+stocksVal);
+    const bovN=cap?(cap.boveda||0):0;
+    const capTotalN=opN+patN+bovN;
+    const deployedN=riskTotal;
+    const reserveN=Math.max(0,opN-deployedN);
+    const initialN=cap&&cap.initial?((cap.initial.operativo||0)+(cap.initial.patrimonio||0)+(cap.initial.boveda||0)):0;
+    const growthN=initialN>0?((capTotalN-initialN)/initialN)*100:null;
+    const stocksGL=stocksVal-stocksCost;
+    const stockRows=(cap&&cap.stocks||[]).map(st=>{const cur=st.currentPrice||st.entryPrice;const gl=((cur-st.entryPrice)*st.shares);const glPct=st.entryPrice>0?((cur-st.entryPrice)/st.entryPrice)*100:0;const mv=cur*st.shares;return {ticker:st.ticker,shares:st.shares,entry:Number(st.entryPrice).toFixed(2),current:Number(cur).toFixed(2),mv:this.fmt(mv),gl:(gl>=0?'+':'-')+this.fmt(gl).replace('-',''),glPct:(glPct>=0?'+':'')+glPct.toFixed(1)+'%',glColor:gl>=0?'#34d399':'#ef5a78'};});
+    const moveRows=(cap&&cap.movements||[]).slice(0,12).map(mv=>{const labels={operativo:'Operativo',patrimonio:'Patrimonio',patrimonioCash:'Patrimonio',boveda:'Bóveda',externo:'Externo'};return {date:mv.date,from:labels[mv.from]||mv.from||'—',to:labels[mv.to]||mv.to||'—',amount:this.fmt(mv.amount),reason:mv.reason||''};});
+    const allocSlices=capTotalN>0?[
+      {label:'Operativo',pct:(opN/capTotalN)*100,pctStr:((opN/capTotalN)*100).toFixed(0)+'%',color:'#f5a623'},
+      {label:'Patrimonio',pct:(patN/capTotalN)*100,pctStr:((patN/capTotalN)*100).toFixed(0)+'%',color:'#5ec2e8'},
+      {label:'Bóveda',pct:(bovN/capTotalN)*100,pctStr:((bovN/capTotalN)*100).toFixed(0)+'%',color:'#8a909c'},
+    ]:[];
+
+    // constitution
+    const articles=this.CONST.map(a=>({num:a.num,title:a.title,sub:a.sub,lead:a.lead||'',body:a.body||'',call:a.call||''}));
+
+    // modal flags
+    const md=this.state.modal;
+    const modalMeta={
+      restore:['Restaurar respaldo','Pega tu JSON exportado','520px'],
+      trade:['Registrar trade','Operación cerrada para el Journal','560px'],
+      update:['Actualizar despliegue','Marca a mercado la posición','560px'],
+      close:['Cerrar posición','Pasa al Journal como trade','520px'],
+      capital:['Configurar capital','Punto de partida de los compartimentos','480px'],
+      stock:['Agregar posición','Patrimonio · acciones','560px'],
+      move:['Mover capital','Entre compartimentos','520px'],
+    };
+    const mm=md?modalMeta[md]:['','','480px'];
+
+    const stratOptions=Object.keys(this.STRAT).map(k=>({v:k,l:this.STRAT[k].label}));
+
+    return {...this.curve(D.trades), ...this.scoreVals(),
+      pageTitle:titles[s][0], pageSub:titles[s][1], nav,
+      isOverview:s==='overview',isJournal:s==='journal',isOpen:s==='open',isScore:s==='score',isCapital:s==='capital',isConst:s==='constitution',
+      goScore:this.go('score'), openAddTrade:this.openAddTrade, openRestore:this.openRestore, doBackup:this.doBackup,
+      // overview
+      empty:D.trades.length===0, hasData:D.trades.length>0,
+      totalPnl:this.fmt(m.pnl,true), pnlColor:m.pnl>=0?'#34d399':'#ef5a78',
+      wr:(m.wr*100).toFixed(1)+'%', pf, pfColor:m.pf>=1?'#34d399':'#ef5a78', dd:'-'+this.fmt(m.maxDD), opsN:m.n, kpis,
+      byStrat, hasByStrat:byStrat.length>0,
+      bestBiasLabel:m.bestBias?(this.STRAT[m.bestBias]?this.STRAT[m.bestBias].label:m.bestBias.toUpperCase()):'—',
+      ...this.hoverOverlay(D.trades),
+      onChartMove:this.onChartMove, onChartLeave:this.onChartLeave,
+      // journal
+      jView:this.state.jView, jCalendar:this.state.jView==='calendar', jList:this.state.jView==='list',
+      setCalendar:this.setView('calendar'), setList:this.setView('list'),
+      calMonthLabel:this.monthLabel(ym), calMonthPnl:this.fmt(monthPnl,true), calMonthColor:monthPnl>=0?'#34d399':'#ef5a78',
+      prevMonth:this.shiftMonth(-1), nextMonth:this.shiftMonth(1),
+      jTicker:jt, jStrat:js, setJTicker:this.setJTicker, setJStrat:this.setJStrat,
+      tickerOptions:[{v:'all',l:'Todos los tickers'},...allTickers.map(t=>({v:t,l:t}))],
+      stratFilterOptions:[{v:'all',l:'Todas las estrategias'},...allStrats.map(k=>({v:k,l:(this.STRAT[k]?this.STRAT[k].label:k.toUpperCase())}))],
+      dow:['D','L','M','M','J','V','S'], days:this.buildDays(filtered, ym),
+      tradeRows, noTrades:tradeRows.length===0,
+      hasDay:jDay!=null, dayLabel:(jDay!=null?jDay+' de '+this.monthLabel(ym):''), dayPnl:this.fmt(dayPnl,true), dayPnlColor:dayPnl>=0?'#34d399':'#ef5a78', dayDetail, dayCount:dayTrades.length, clearDay:this.clearDay,
+      hasRows:tradeRows.length>0,
+      jCalBg:this.state.jView==='calendar'?'#221a0c':'transparent', jCalColor:this.state.jView==='calendar'?'#f5a623':'#8a909c',
+      jListBg:this.state.jView==='list'?'#221a0c':'transparent', jListColor:this.state.jView==='list'?'#f5a623':'#8a909c',
+      jGridCols:(jDay!=null?'1fr 340px':'1fr'), jLeftBorder:(jDay!=null?'border-right:1px solid #1a1d24;':''),
+      // open
+      positions, noDeps:deployed.length===0, hasDeps:deployed.length>0,
+      // capital
+      noCapital:!cap, hasCapital:!!cap, capTotal:this.fmt(capTotalN), capOp:this.fmt(opN), capPat:this.fmt(patN), capBov:this.fmt(bovN),
+      capGrowth:(growthN!=null?(growthN>=0?'+':'')+growthN.toFixed(1)+'%':'—'), capGrowthColor:(growthN!=null&&growthN>=0)?'#34d399':'#ef5a78', hasGrowth:growthN!=null, capInitial:this.fmt(initialN),
+      deployedStr:this.fmt(deployedN), reserveStr:this.fmt(reserveN), depCount:deployed.length,
+      deployedPct:(opN>0?Math.max(4,Math.min(100,(deployedN/opN)*100)):4),
+      allocSlices, hasAlloc:allocSlices.length>0,
+      stockRows, noStocks:(cap&&cap.stocks&&cap.stocks.length)?false:true, hasStocks:(cap&&cap.stocks&&cap.stocks.length)?true:false,
+      stocksValStr:this.fmt(stocksVal), stocksGLStr:(stocksGL>=0?'+':'-')+this.fmt(stocksGL).replace('-',''), stocksGLColor:stocksGL>=0?'#34d399':'#ef5a78', patCashStr:this.fmt(patCashN),
+      moveRows, noMoves:(cap&&cap.movements&&cap.movements.length)?false:true,
+      openCapitalSetup:this.openCapitalSetup, openAddStock:this.openAddStock, openMoveCapital:this.openMoveCapital,
+      // constitution
+      articles, compromiso:this.COMPROMISO,
+      // modals
+      showModal:!!md, closeModal:this.closeModal, stop:this.stop, modalTitle:mm[0], modalSub:mm[1], modalWidth:mm[2],
+      mRestore:md==='restore', mTrade:md==='trade', mUpdate:md==='update', mClose:md==='close', mCapital:md==='capital', mStock:md==='stock', mMove:md==='move',
+      restoreText:this.state.restoreText, onRestoreText:this.onRestoreText, restoreErr:this.state.restoreErr, doRestore:this.doRestore,
+      tf:this.state.tf, onT:{date:this.onBuf('tf','date'),ticker:this.onBuf('tf','ticker'),strat:this.onBuf('tf','strat'),strikes:this.onBuf('tf','strikes'),pnl:this.onBuf('tf','pnl'),contracts:this.onBuf('tf','contracts'),isHedge:this.onBuf('tf','isHedge')}, doAddTrade:this.doAddTrade, stratOptions,
+      uf:this.state.uf, onU:{currentPrice:this.onBuf('uf','currentPrice'),currentSpot:this.onBuf('uf','currentSpot'),currentIv:this.onBuf('uf','currentIv'),currentDelta:this.onBuf('uf','currentDelta')}, doUpdateDep:this.doUpdateDep,
+      cf:this.state.cf, onC:{finalPnl:this.onBuf('cf','finalPnl'),closeDate:this.onBuf('cf','closeDate')}, doCloseDep:this.doCloseDep,
+      capf:this.state.capf, onCap:{operativo:this.onBuf('capf','operativo'),patrimonio:this.onBuf('capf','patrimonio'),boveda:this.onBuf('capf','boveda')}, doCapitalSetup:this.doCapitalSetup,
+      sf:this.state.sf, onS:{ticker:this.onBuf('sf','ticker'),shares:this.onBuf('sf','shares'),entry:this.onBuf('sf','entry'),current:this.onBuf('sf','current')}, doAddStock:this.doAddStock,
+      mvf:this.state.mvf, onMv:{from:this.onBuf('mvf','from'),to:this.onBuf('mvf','to'),amount:this.onBuf('mvf','amount')}, doMoveCapital:this.doMoveCapital,
+      toast:this.state.toast};
+  }
+}
+</script>
+</body>
+</html>

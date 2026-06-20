@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+.serif{font-family:'Newsreader',serif;font-weight:500;white-space:nowrap;}
+.tlwrap{font-family:'Space Grotesk',sans-serif;}
+.tlwrap::-webkit-scrollbar{width:0;}
+@keyframes tlf{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes drawline{from{stroke-dashoffset:900;}to{stroke-dashoffset:0;}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;width:100%;background:#16181d;display:flex;align-items:center;justify-content:center;padding:30px;font-family:'Space Grotesk',sans-serif;">
+  <x-import component="IOSDevice" from="./ios-frame.jsx" dark="{{ dark }}" hint-size="390px,844px">
+
+    <div class="tlwrap" style="height:100%;width:100%;background:#0a0b0e;color:#eef1f5;display:flex;flex-direction:column;overflow:hidden;font-size:14px;">
+
+      <!-- app header -->
+      <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:52px 18px 12px;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:26px;height:26px;background:linear-gradient(150deg,#fbbf3b,#f59016);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#1a1205;font-weight:700;font-size:14px;">↗</div>
+          <span class="serif" style="font-size:18px;">TradeLog</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:10px;border:1px solid #1c2028;display:flex;align-items:center;justify-content:center;color:#8a909c;font-size:15px;">▦</div>
+          <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(150deg,#fbbf3b,#f59016);display:flex;align-items:center;justify-content:center;color:#1a1205;font-weight:700;font-size:18px;">+</div>
+        </div>
+      </div>
+
+      <!-- scroll area -->
+      <div style="flex:1;overflow-y:auto;padding:4px 18px 16px;">
+
+        <!-- ===== RESUMEN ===== -->
+        <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="animation:tlf .3s ease both;">
+          <div class="serif" style="font-size:27px;line-height:1;">Resumen</div>
+          <div style="font-size:12px;color:#727885;margin-top:5px;">88 operaciones · junio 2026</div>
+
+          <!-- hero ribbon -->
+          <div style="background:#0e0f13;border:1px solid #1a1d24;border-radius:16px;padding:18px;margin-top:16px;position:relative;overflow:hidden;">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#fbbf3b,#f59016);"></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#727885;text-transform:uppercase;">Resultado del mes</div>
+            <div class="serif" style="font-size:46px;line-height:1;color:#34d399;margin-top:4px;">+$559</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:16px;border-top:1px solid #1a1d24;padding-top:14px;">
+              <div><div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Acum.</div><div class="serif" style="font-size:19px;margin-top:4px;color:#f5a623;">+$1,932</div></div>
+              <div style="padding-left:14px;border-left:1px solid #1a1d24;"><div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">PF</div><div class="serif" style="font-size:19px;margin-top:4px;color:#ef5a78;">0.54</div></div>
+              <div style="padding-left:14px;border-left:1px solid #1a1d24;"><div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">DD</div><div class="serif" style="font-size:19px;margin-top:4px;color:#ef5a78;">-$884</div></div>
+            </div>
+          </div>
+
+          <!-- equity -->
+          <div style="background:#0e0f13;border:1px solid #1a1d24;border-radius:16px;padding:16px 16px 10px;margin-top:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-weight:600;font-size:13.5px;">Curva de equity</div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:#221a0c;color:#f5a623;padding:3px 9px;border-radius:6px;">Todo</span>
+            </div>
+            <svg viewBox="0 0 320 130" preserveAspectRatio="none" style="width:100%;height:130px;margin-top:12px;display:block;">
+              <defs><linearGradient id="meq" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f5a623" stop-opacity="0.26"/><stop offset="100%" stop-color="#f5a623" stop-opacity="0"/></linearGradient></defs>
+              <path d="{{ areaPath }}" fill="url(#meq)"/>
+              <path d="{{ linePath }}" fill="none" stroke="#f5a623" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="900" style="animation:drawline 1.2s ease-out forwards;"/>
+              <circle cx="{{ lastX }}" cy="{{ lastY }}" r="4" fill="#f5a623"/>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:#565d6a;margin-top:4px;"><span>JUN 1</span><span>JUN 19</span></div>
+          </div>
+
+          <!-- capital -->
+          <div style="background:#0e0f13;border:1px solid #1a1d24;border-radius:16px;padding:16px;margin-top:12px;">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+              <div><div style="font-weight:600;font-size:13.5px;">Asignación de capital</div><div class="serif" style="font-size:30px;line-height:1;margin-top:8px;">$15,746</div></div>
+              <span style="color:#565d6a;">→</span>
+            </div>
+            <div style="margin-top:14px;display:flex;height:7px;border-radius:5px;overflow:hidden;"><div style="width:5%;background:#f5a623;"></div><div style="width:1%;"></div><div style="width:94%;background:#1c2028;"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12px;"><span style="color:#8a909c;">En riesgo <span style="font-family:'JetBrains Mono',monospace;color:#f5a623;">$804</span></span><span style="color:#8a909c;">Reserva <span style="font-family:'JetBrains Mono',monospace;color:#c9cdd6;">$14.9k</span></span></div>
+          </div>
+
+          <!-- KPI rows -->
+          <div style="margin-top:18px;">
+            <div style="font-weight:600;font-size:13.5px;margin-bottom:6px;">Métricas del sistema</div>
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+              <div style="padding:12px 0;border-bottom:1px solid #181b22;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">{{ k.label }}</span>
+                  <span class="serif" style="font-size:21px;color:{{ k.color }};line-height:1;">{{ k.val }}</span>
+                </div>
+                <div style="height:3px;border-radius:3px;background:#181b22;margin-top:9px;overflow:hidden;"><div style="height:100%;width:{{ k.pct }}%;background:{{ k.color }};border-radius:3px;"></div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ===== DESPLIEGUES ===== -->
+        <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:tlf .3s ease both;">
+          <div class="serif" style="font-size:27px;line-height:1;">Despliegues</div>
+          <div style="font-size:12px;color:#727885;margin-top:5px;">3 abiertos · riesgo $804 · -$179 no real.</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
+            <sc-for list="{{ positions }}" as="p" hint-placeholder-count="2">
+              <div style="background:#0e0f13;border:1px solid {{ p.cardBorder }};border-radius:16px;overflow:hidden;">
+                <div style="height:3px;background:{{ p.accent }};"></div>
+                <div style="padding:15px 16px;">
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <span class="serif" style="font-size:22px;">{{ p.ticker }}</span>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:{{ p.tagColor }};border:1px solid #2a3038;padding:2px 7px;border-radius:6px;">{{ p.strat }}</span>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#727885;">{{ p.dte }}</span>
+                    <sc-if value="{{ p.stale }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:#f5a623;border:1px solid #5a4716;padding:3px 8px;border-radius:20px;">⏻ STALE</span></sc-if>
+                  </div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#565d6a;margin-top:8px;">{{ p.meta }}</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:14px;">
+                    <div><div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Profit</div><div class="serif" style="font-size:22px;color:{{ p.pnlColor }};margin-top:4px;line-height:1;">{{ p.profit }}</div></div>
+                    <div style="padding-left:12px;border-left:1px solid #181b22;"><div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Unreal.</div><div class="serif" style="font-size:22px;color:{{ p.pnlColor }};margin-top:4px;line-height:1;">{{ p.unreal }}</div></div>
+                    <div style="padding-left:12px;border-left:1px solid #181b22;"><div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;color:#727885;text-transform:uppercase;">Score</div><div class="serif" style="font-size:22px;color:#f5a623;margin-top:4px;line-height:1;">{{ p.score }}</div></div>
+                  </div>
+                  <div style="height:4px;border-radius:3px;background:#181b22;margin-top:14px;overflow:hidden;"><div style="height:100%;width:{{ p.timePct }}%;background:{{ p.timeColor }};border-radius:3px;"></div></div>
+                  <sc-if value="{{ p.hasAlert }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:8px;margin-top:12px;color:#ef5a78;font-size:11.5px;line-height:1.4;"><span>⚠</span><span><strong style="font-weight:600;">{{ p.alertTitle }}</strong> — {{ p.alertBody }}</span></div>
+                  </sc-if>
+                  <div style="display:flex;gap:8px;margin-top:14px;">
+                    <button style="flex:1;border:1px solid #1c2028;background:transparent;color:#8a909c;font-weight:500;font-size:12.5px;padding:10px;border-radius:9px;">↻ Actualizar</button>
+                    <button style="flex:1.3;border:0;background:{{ p.closeBg }};color:{{ p.closeColor }};font-weight:600;font-size:12.5px;padding:10px;border-radius:9px;">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ===== JOURNAL ===== -->
+        <sc-if value="{{ isJournal }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:tlf .3s ease both;">
+          <div class="serif" style="font-size:27px;line-height:1;">Journal</div>
+          <div style="font-size:12px;color:#727885;margin-top:5px;">junio de 2026 · <span style="color:#34d399;font-family:'JetBrains Mono',monospace;">+$559.35</span></div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:18px;">
+            <sc-for list="{{ dow }}" as="d" hint-placeholder-count="7"><div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:#454c58;padding-bottom:3px;">{{ d }}</div></sc-for>
+            <sc-for list="{{ days }}" as="c" hint-placeholder-count="35">
+              <div style="aspect-ratio:.92;border-radius:8px;background:{{ c.bg }};border:1px solid {{ c.border }};padding:5px 6px;display:flex;flex-direction:column;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:{{ c.numColor }};">{{ c.num }}</span>
+                <sc-if value="{{ c.has }}" hint-placeholder-val="{{ false }}"><span class="serif" style="margin-top:auto;font-size:11px;color:{{ c.pnlColor }};">{{ c.pnl }}</span></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ===== SCORE ===== -->
+        <sc-if value="{{ isScore }}" hint-placeholder-val="{{ false }}">
+        <div style="animation:tlf .3s ease both;">
+          <div class="serif" style="font-size:27px;line-height:1;">Scorecard</div>
+          <div style="font-size:12px;color:#727885;margin-top:5px;">Evalúa tu setup antes de entrar</div>
+          <div style="background:#0e0f13;border:1px solid #1a1d24;border-radius:16px;padding:16px;margin-top:16px;text-align:center;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:#727885;text-transform:uppercase;">Veredicto del setup</div>
+            <div class="serif" style="font-size:64px;line-height:1;color:#f5a623;margin-top:8px;">7<span style="font-size:30px;color:#454c58;">/8</span></div>
+            <div style="display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:#221a0c;color:#f5a623;border-radius:20px;padding:6px 14px;font-weight:600;font-size:12.5px;">Casi A+ · 1 criterio falla</div>
+          </div>
+          <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ criteria }}" as="c" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:11px;background:#0e0f13;border:1px solid #1a1d24;border-radius:12px;padding:12px 14px;">
+                <span style="width:20px;height:20px;flex:none;border-radius:6px;background:{{ c.bg }};color:{{ c.ink }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">{{ c.mark }}</span>
+                <span style="flex:1;font-size:13px;color:{{ c.text }};">{{ c.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+
+      <!-- bottom tab bar -->
+      <div style="flex:none;display:flex;border-top:1px solid #181b22;background:#0c0d11;padding:10px 12px 6px;">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+          <button onClick="{{ t.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;cursor:pointer;padding:4px 0;color:{{ t.color }};">
+            <span style="font-size:18px;">{{ t.ico }}</span>
+            <span style="font-size:10px;font-weight:{{ t.weight }};">{{ t.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+    </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:920},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;open&quot;,&quot;journal&quot;,&quot;score&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { screen: this.props.startScreen || 'overview' };
+  go(s){ return () => this.setState({ screen: s }); }
+
+  buildCurve(){
+    const pts=[12,18,16,26,34,40,38,52,60,58,70,82,90,86,100,116,124,120,138,150,148,170,166,182,178,150,162,176,190,205];
+    const W=320,H=126,pad=4,min=0,max=220,n=pts.length;
+    const xs=i=>(i/(n-1))*W, ys=v=>H-pad-(v-min)/(max-min)*(H-pad*2);
+    let line='';
+    pts.forEach((v,i)=>{const x=xs(i).toFixed(1),y=ys(v).toFixed(1);line+=(i===0?`M ${x} ${y}`:` L ${x} ${y}`);});
+    const area=line+` L ${W} ${H} L 0 ${H} Z`;
+    return {linePath:line,areaPath:area,lastX:xs(n-1).toFixed(1),lastY:ys(pts[n-1]).toFixed(1)};
+  }
+
+  buildDays(){
+    const data={1:263,2:1,3:140,4:-43,5:-8,8:108,9:-145,10:-92,11:-87,12:70,15:176,17:115,18:62};
+    const cells=[{num:'',blank:true}];
+    for(let d=1;d<=30;d++) cells.push({num:d,blank:false});
+    while(cells.length%7!==0) cells.push({num:'',blank:true});
+    return cells.map(c=>{
+      if(c.blank) return {num:'',has:false,bg:'transparent',border:'transparent',numColor:'#2c2f37',pnl:'',pnlColor:'#666'};
+      const v=data[c.num],has=v!==undefined,win=has&&v>0;
+      return {num:c.num,has,
+        bg:has?(win?'#0c1812':'#180c10'):'#0c0e12',
+        border:has?(win?'#163024':'#301620'):'#13161c',
+        numColor:has?'#c9cdd6':'#454c58',
+        pnl:has?(win?`+$${v}`:`-$${Math.abs(v)}`):'',
+        pnlColor:win?'#34d399':'#ef5a78'};
+    });
+  }
+
+  renderVals(){
+    const s=this.state.screen;
+    const kpis=[
+      {label:'Win rate',val:'76.8%',color:'#34d399',pct:76.8},
+      {label:'Profit factor',val:'0.54',color:'#ef5a78',pct:27},
+      {label:'Avg win',val:'+$55',color:'#34d399',pct:55},
+      {label:'Avg loss',val:'-$100',color:'#ef5a78',pct:100},
+    ];
+    const positions=[
+      {ticker:'META',strat:'PCS',dte:'7d',meta:'565/560 · 1 contrato · crédito $1.20',accent:'#ef5a78',cardBorder:'#301620',tagColor:'#f5a623',stale:true,
+       profit:'-17%',unreal:'-$20',score:'74',pnlColor:'#ef5a78',timePct:22,timeColor:'#34d399',
+       hasAlert:true,alertTitle:'Evaluar estructura',alertBody:'bandera roja activa, considera cerrar.',
+       closeBg:'linear-gradient(150deg,#fbbf3b,#f59016)',closeColor:'#1a1205'},
+      {ticker:'IREN',strat:'BCS',dte:'28d',meta:'60/65 · 1 contrato · crédito $2.16',accent:'#34d399',cardBorder:'#1a1d24',tagColor:'#5ec2e8',stale:false,
+       profit:'-5%',unreal:'-$11',score:'78',pnlColor:'#ef5a78',timePct:12,timeColor:'#34d399',
+       hasAlert:false,alertTitle:'',alertBody:'',closeBg:'#161b23',closeColor:'#c9cdd6'},
+    ];
+    const criteria=[
+      {label:'Tendencia alcista definida',ok:true},
+      {label:'Retroceso de 2–4% en soporte',ok:true},
+      {label:'Strike corto bajo el soporte',ok:true},
+      {label:'IV elevada vs HV',ok:true},
+      {label:'Crédito ≥ ⅓ del ancho',ok:false},
+      {label:'Tamaño ≤ $550 + plan de salida',ok:true},
+    ].map(c=>({label:c.label, mark:c.ok?'✓':'✗', bg:c.ok?'#13201a':'#2a1216', ink:c.ok?'#34d399':'#ef5a78', text:c.ok?'#c9cdd6':'#ef5a78'}));
+
+    const tab=(key,label,ico)=>({label,ico,go:this.go(key),color:s===key?'#f5a623':'#565d6a',weight:s===key?'600':'500'});
+
+    return {...this.buildCurve(),
+      dark:true,
+      isOverview:s==='overview', isOpen:s==='open', isJournal:s==='journal', isScore:s==='score',
+      kpis, positions, criteria,
+      dow:['D','L','M','M','J','V','S'], days:this.buildDays(),
+      tabs:[tab('overview','Resumen','◧'),tab('journal','Journal','▦'),tab('open','Abiertos','◎'),tab('score','Score','◆')],
+    };
+  }
+}
+</script>
+</body>
+</html>
